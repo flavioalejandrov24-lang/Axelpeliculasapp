@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Referencias Peliculas</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "primary-dark": "#1e293b",
+              "secondary-dark": "#0f172a",
+              "accent-blue": "#38bdf8",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      .poster-image {
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        width: 100%;
+        height: 240px;
+      }
+      .custom-scroll::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #38bdf8;
+        border-radius: 4px;
+      }
+      .view {
+        display: none !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        z-index: 100;
+        background-color: #0f172a;
+      }
+      .view.active {
+        display: flex !important;
+      }
+      .genre-link.active {
+        background-color: #38bdf8;
+        color: #000;
+        font-weight: 600;
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 15;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      #sidebar.active {
+        transform: translateX(0);
+      }
+
+      @keyframes bounce-horizontal {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-5px); }
+}
+.animate-bounce-horizontal {
+  animation: bounce-horizontal 1.5s infinite;
+}
+      
+    </style>
+  </head>
+  <body class="bg-secondary-dark text-white font-sans min-h-screen">
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    
+    <!-- LOGIN -->
+    <div id="view-login" class="view active items-center justify-center px-4">
+      <div class="p-6 sm:p-8 bg-primary-dark rounded-xl w-full max-w-sm shadow-2xl flex flex-col items-center">
+    <img
+  src="https://raw.githubusercontent.com/Compualextech24/PAGINADEPELICULAS/main/logotipo.PNG"
+  alt="AXO Movies"
+  class="w-64 sm:w-72 h-auto mx-auto mb-2 drop-shadow-xl"
+/>
+
+
+        <h2 class="text-sm sm:text-base font-bold text-accent-blue text-center mb-8">
+          🎬 MOVIES ONLINE FREE 🎬
+        </h2>
+
+        <button
+          type="button"
+          id="google-login-btn"
+          class="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 font-extrabold text-base sm:text-lg rounded-lg shadow-lg hover:from-yellow-300 hover:to-yellow-500 hover:shadow-xl transition-all flex items-center justify-center space-x-2 mb-4"
+        >
+          <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 48 48">
+            <path
+              fill="#FFC107"
+              d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.2 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c10.7 0 19.6-7.7 19.6-20 0-1.1-.1-2.3-.3-3.5z"
+            />
+          </svg>
+          <span>Entrar con Google</span>
+        </button>
+
+        <label class="flex items-center space-x-2 text-xs sm:text-sm text-gray-300 mb-6">
+          <input
+            type="checkbox"
+            id="terms-check"
+            class="accent-accent-blue w-4 h-4"
+            required
+          />
+          <span>Acepto términos y condiciones</span>
+        </label>
+
+        <p class="text-xs text-gray-500 text-center">
+          App creada por Axeltechnology
+        </p>
+
+        <p id="login-status" class="text-xs sm:text-sm text-center text-red-400 mt-3"></p>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="view-dashboard" class="view w-full min-h-screen">
+      <button
+        id="menu-toggle"
+        class="md:hidden fixed top-0 left-0 z-30 p-2 bg-accent-blue rounded-r-lg shadow-lg"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+        </svg>
+      </button>
+
+      <aside
+        id="sidebar"
+        class="fixed inset-y-0 left-0 w-52 bg-secondary-dark border-r border-gray-700 p-4 custom-scroll overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300"
+      >
+        <div class="flex items-center justify-end mb-6">
+          <h2 class="text-xs font-bold text-accent-blue">
+            <span id="user-name">Usuario</span>!
+          </h2>
+        </div>
+        <nav class="space-y-6">
+          <button
+            id="create-btn"
+            class="w-full flex items-center justify-center space-x-2 p-3 text-sm font-medium text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg hover:from-yellow-300 hover:to-yellow-500 transition"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            <span>Subir película</span>
+          </button>
+
+          <div class="space-y-3">
+            <p class="text-xs uppercase tracking-wider text-gray-400 mb-3">
+              Géneros
+            </p>
+            <nav class="space-y-1">
+              <a href="#" data-category="" class="genre-link active block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                🎬 Todos
+              </a>
+              <a href="#" data-category="Acción" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                💥 Acción
+              </a>
+              <a href="#" data-category="Anime" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                🎌 Anime
+              </a>
+              <a href="#" data-category="Comedia" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                😂 Comedia
+              </a>
+              <a href="#" data-category="Terror" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                👻 Terror
+              </a>
+              <a href="#" data-category="Drama" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                🎭 Drama
+              </a>
+              <a href="#" data-category="Ciencia Ficción" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                🚀 Ciencia Ficción
+              </a>
+              <a href="#" data-category="Cristianas" class="genre-link block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
+                ✝️ Cristianas
+              </a>
+            </nav>
+          </div>
+
+          <button
+            id="logout-btn"
+            class="w-full p-2 text-lg text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-md transition"
+          >
+            🚪 Cerrar Sesión
+          </button>
+
+<div class="mt-12 mb-10 flex flex-col items-center opacity-60 md:hidden border-t border-gray-700/30 pt-6">
+  <p class="text-[10px] uppercase tracking-widest mb-2 text-accent-blue font-bold">Deslizar para cerrar</p>
+  <svg class="w-6 h-6 animate-bounce-horizontal text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+  </svg>
+</div>
+          
+        </nav>
+      </aside>
+
+      <main class="md:ml-64 p-4 md:p-6">
+       <header class="h-16 flex items-center justify-center border-b border-gray-700/50 mb-6 sticky top-0 bg-secondary-dark z-10 w-full">
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+          CATÁLOGO PELICULAS
+          </h1>
+        </header>
+
+        <section>
+       
+           <div class="flex items-center justify-center mb-4 gap-3 w-full">
+   <h3 class="text-lg sm:text-xl font-semibold text-gray-400">
+      PELÍCULAS EN CATÁLOGO
+   </h3>
+   <div class="text-sm text-cyan-400 font-semibold">
+      <span id="movie-count">0</span> referencias
+   </div>
+</div>
+         <div id="loading-message" class="w-full text-center py-12 text-gray-500">
+   <div class="inline-block animate-spin ..."></div>
+   <p class="mt-2">Cargando catálogo...</p>
+</div>
+
+          <div id="catalog-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- MODAL CREAR -->
+    <div id="modal-create" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 9999">
+      <div class="bg-primary-dark p-6 w-full max-w-lg rounded-xl shadow-2xl custom-scroll max-h-[90vh] overflow-y-auto">
+        <h2 class="text-2xl font-bold mb-6 text-accent-blue text-center">
+          CREAR NUEVA REFERENCIA
+        </h2>
+        <form id="movie-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Título</label>
+            <input type="text" id="titulo" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg focus:ring-accent-blue focus:border-accent-blue text-white"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Categoría / Género</label>
+            <select id="categoria" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white">
+              <option value="">Selecciona un género</option>
+              <option value="Acción">Acción</option>
+              <option value="Anime">Anime</option>
+              <option value="Comedia">Comedia</option>
+              <option value="Ciencia Ficción">Ciencia Ficción</option>
+              <option value="Cristianas">Cristianas</option>
+              <option value="Documentales">Documentales</option>
+              <option value="Drama">Drama</option>
+              <option value="Terror">Terror</option>
+              <option value="Thriller">Thriller</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Director o Año</label>
+            <input type="text" id="director_o_anio" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Reseña</label>
+            <textarea id="resena" rows="3" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Link URL</label>
+            <input type="url" id="link_url" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Clave de Acceso</label>
+            <input type="text" id="clave" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Póster/Portada</label>
+            <div class="flex items-center space-x-4">
+              <div class="w-20 h-28 bg-gray-700 rounded-lg overflow-hidden border border-gray-600 flex-shrink-0">
+                <img id="poster-preview" src="https://placehold.co/80x112/334155/E2E8F0?text=+" class="w-full h-full object-cover"/>
+              </div>
+              <label for="poster_file" class="cursor-pointer px-4 py-2 text-sm font-medium text-gray-800 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg hover:from-yellow-300 hover:to-yellow-500 transition">
+                Seleccionar
+              </label>
+              <input type="file" id="poster_file" accept="image/*" required class="hidden"/>
+            </div>
+          </div>
+          <div class="flex space-x-3 pt-4">
+            <button type="button" id="cancel-create-btn" class="flex-1 px-4 py-2 text-sm bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+              Cancelar
+            </button>
+            <button type="submit" class="flex-1 px-4 py-2 text-sm bg-accent-blue rounded-lg hover:bg-blue-500 transition">
+              Guardar
+            </button>
+          </div>
+          <p id="form-status" class="text-sm text-center"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DETALLES -->
+    <div id="modal-details" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 9999">
+      <div class="bg-primary-dark p-6 w-full max-w-lg rounded-xl shadow-2xl custom-scroll max-h-[90vh] overflow-y-auto">
+        <button id="close-details-btn" class="float-right text-gray-400 hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        <div id="details-content"></div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+     const CONFIG = {
+  supabaseUrl: "https://fzslqxsclswkedlohgtr.supabase.co",
+  supabaseKey: "sb_publishable_NXZ0khgr4LjBMgil_to20A_ui04ZkHz",
+  table: "catalogo_peliculas",
+  adminEmail: "compualextech24@gmail.com",
+};
+
+      const supabase = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+      const $ = (id) => document.getElementById(id);
+
+      const state = {
+        movies: [],
+        filteredMovies: [],
+        currentUser: null,
+        isAdmin: false,
+      };
+
+      const Router = {
+        showView(viewId) {
+          document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+          $(viewId).classList.add("active");
+        },
+        toLogin() {
+          this.showView("view-login");
+        },
+        toDashboard() {
+          this.showView("view-dashboard");
+          CatalogModule.loadCatalog();
+        },
+      };
+
+      const AuthModule = {
+        async loginWithGoogle() {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: window.location.origin + window.location.pathname,
+            },
+          });
+          if (error) throw error;
+        },
+
+        async logout() {
+          await supabase.auth.signOut();
+          state.currentUser = null;
+          Router.toLogin();
+        },
+
+        async checkSession() {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) {
+            state.currentUser = data.session.user;
+            state.isAdmin = data.session.user.email === CONFIG.adminEmail;
+            $("user-name").textContent = data.session.user.email.split("@")[0];
+            Router.toDashboard();
+          } else {
+            Router.toLogin();
+          }
+        },
+      };
+
+      const CatalogModule = {
+        async loadCatalog() {
+          $("loading-message").classList.remove("hidden");
+          $("catalog-grid").innerHTML = "";
+
+          const { data, error } = await supabase
+            .from(CONFIG.table)
+            .select("*")
+            .order("fecha_creacion", { ascending: false });
+
+          if (error) {
+            $("catalog-grid").innerHTML = '<p class="col-span-full text-center text-red-400">Error al cargar</p>';
+            return;
+          }
+
+          $("loading-message").classList.add("hidden");
+          state.movies = data || [];
+          state.filteredMovies = state.movies;
+          this.renderMovies();
+        },
+
+        renderMovies() {
+          const grid = $("catalog-grid");
+          grid.innerHTML = "";
+
+          if (state.filteredMovies.length === 0) {
+          grid.innerHTML = '<p class="col-span-full w-full text-center text-gray-400 py-10">No hay películas en esta categoría</p>';
+            return;
+          }
+
+          $("movie-count").textContent = state.filteredMovies.length;
+
+          state.filteredMovies.forEach((movie) => {
+            const card = document.createElement("div");
+            card.className = "bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group";
+
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "p-2 cursor-pointer";
+            contentDiv.onclick = () => {
+  // Cerrar sidebar si está abierto
+  $("sidebar").classList.remove("active");
+  $("sidebar-overlay").classList.remove("active");
+  UIModule.showDetails(movie);
+};
+            contentDiv.innerHTML = `
+              <img src="${movie.foto_url}" class="poster-image rounded-lg mb-2" alt="${movie.titulo}"/>
+              <p class="text-sm font-semibold text-center truncate">${movie.titulo}</p>
+              <p class="text-xs text-gray-400 text-center">${movie.director_o_anio}</p>
+            `;
+
+            card.appendChild(contentDiv);
+
+            if (state.isAdmin) {
+              const deleteBtn = document.createElement("button");
+              deleteBtn.className = "absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10";
+              deleteBtn.title = "Eliminar película";
+              deleteBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              `;
+              deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                CatalogModule.deleteMovie(movie.id);
+              };
+              card.appendChild(deleteBtn);
+            }
+
+            grid.appendChild(card);
+          });
+        },
+
+        async saveMovie(formData) {
+          const file = $("poster_file").files[0];
+          if (!file) throw new Error("Selecciona una imagen");
+
+          const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+          const { error: uploadError } = await supabase.storage.from("portadas").upload(fileName, file);
+          if (uploadError) throw uploadError;
+
+          const { data: urlData } = supabase.storage.from("portadas").getPublicUrl(fileName);
+
+          const payload = {
+            ...formData,
+            foto_url: urlData.publicUrl,
+            fecha_creacion: new Date().toISOString(),
+          };
+
+          const { error } = await supabase.from(CONFIG.table).insert([payload]);
+          if (error) throw error;
+
+          this.loadCatalog();
+        },
+
+        filterByCategory(category) {
+          if (!category) {
+            state.filteredMovies = state.movies;
+          } else {
+            state.filteredMovies = state.movies.filter((m) => m.categoria === category);
+          }
+          this.renderMovies();
+        },
+
+        async deleteMovie(movieId) {
+          if (!state.isAdmin) {
+            alert("No tienes permisos para eliminar películas");
+            return;
+          }
+
+          if (!confirm("¿Estás seguro de eliminar esta película?")) return;
+
+          try {
+            const { error } = await supabase.from(CONFIG.table).delete().eq("id", movieId);
+            if (error) throw error;
+            alert("✅ Película eliminada correctamente");
+            this.loadCatalog();
+          } catch (error) {
+            alert("❌ Error al eliminar: " + error.message);
+          }
+        },
+      };
+
+      const UIModule = {
+        showModal(modalId) {
+          const modal = $(modalId);
+          if (modal) {
+            modal.classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+          }
+        },
+
+        hideModal(modalId) {
+          const modal = $(modalId);
+          if (modal) {
+            modal.classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+          }
+        },
+
+        showDetails(movie) {
+          const content = $("details-content");
+          if (!content) return;
+
+          content.innerHTML = `
+            <div class="flex flex-col items-center space-y-3 pt-8">
+              <img src="${movie.foto_url}" class="w-48 h-72 object-cover rounded-lg shadow-md"/>
+              <h2 class="text-xl sm:text-2xl font-bold text-center text-accent-blue">${movie.titulo}</h2>
+              <p class="text-sm text-gray-400">📁 ${movie.categoria} • 🎬 ${movie.director_o_anio}</p>
+              <p class="text-sm text-gray-300 text-justify px-4">${movie.resena}</p>
+              
+              ${movie.clave ? `
+                <div class="bg-yellow-900/30 border border-yellow-600 rounded-lg p-3 w-full max-w-sm">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xs text-yellow-400">🔐 Clave de acceso:</p>
+                    <p class="text-sm font-mono text-white">${movie.clave}</p>
+                  </div>
+                </div>
+              ` : ""}
+              
+              <div class="flex space-x-3 w-full max-w-sm pt-2">
+                <a href="${movie.link_url}" target="_blank" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-2 rounded-lg text-center hover:from-green-600 hover:to-emerald-700 transition font-semibold flex items-center justify-center space-x-2 text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                  </svg>
+                  <span>Descargar</span>
+                </a>
+                <button onclick="window.UIModule.hideModal('modal-details')" class="flex-1 bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-500 transition font-semibold text-sm">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          `;
+
+          this.showModal("modal-details");
+        },
+      };
+
+      window.UIModule = UIModule;
+      window.CatalogModule = CatalogModule;
+
+     $("menu-toggle").addEventListener("click", (e) => {
+        e.stopPropagation();
+        $("sidebar").classList.toggle("active");
+        $("sidebar-overlay").classList.toggle("active");
+      });
+
+      $("sidebar-overlay").addEventListener("click", () => {
+        $("sidebar").classList.remove("active");
+        $("sidebar-overlay").classList.remove("active");
+      });
+
+      document.querySelectorAll(".genre-link").forEach((link) => {
+        link.addEventListener("click", () => {
+          $("sidebar").classList.remove("active");
+          $("sidebar-overlay").classList.remove("active");
+        });
+      });
+
+      $("google-login-btn").addEventListener("click", () => {
+        if (!$("terms-check").checked) {
+          $("login-status").textContent = "Debes aceptar los términos y condiciones.";
+          return;
+        }
+        AuthModule.loginWithGoogle();
+      });
+
+      $("logout-btn").addEventListener("click", () => AuthModule.logout());
+
+      $("create-btn").addEventListener("click", () => {
+        $("movie-form").reset();
+        $("poster-preview").src = "https://placehold.co/80x112/334155/E2E8F0?text=+";
+        UIModule.showModal("modal-create");
+      });
+
+      $("cancel-create-btn").addEventListener("click", () => UIModule.hideModal("modal-create"));
+      $("close-details-btn").addEventListener("click", () => UIModule.hideModal("modal-details"));
+
+      $("movie-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const status = $("form-status");
+        status.textContent = "Guardando...";
+
+        try {
+          const formData = {
+            titulo: $("titulo").value,
+            categoria: $("categoria").value,
+            director_o_anio: $("director_o_anio").value,
+            resena: $("resena").value,
+            link_url: $("link_url").value,
+            clave: $("clave").value,
+          };
+
+          await CatalogModule.saveMovie(formData);
+          status.textContent = "✅ ¡Guardado!";
+          status.className = "text-sm text-center text-green-400";
+
+          setTimeout(() => {
+            UIModule.hideModal("modal-create");
+            status.textContent = "";
+            status.className = "text-sm text-center";
+          }, 1000);
+        } catch (error) {
+          status.textContent = "❌ " + error.message;
+          status.className = "text-sm text-center text-red-400";
+        }
+      });
+
+      $("poster_file").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => ($("poster-preview").src = ev.target.result);
+        reader.readAsDataURL(file);
+      });
+
+      document.querySelectorAll(".genre-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          document.querySelectorAll(".genre-link").forEach((l) => l.classList.remove("active"));
+          e.currentTarget.classList.add("active");
+          const category = e.currentTarget.dataset.category;
+          CatalogModule.filterByCategory(category);
+        });
+      });
+
+      // ============================================
+      // 🚀 INICIALIZACIÓN CON LISTENER DE AUTH
+      // ============================================
+      
+      // Escuchar cambios de autenticación (esto detecta cuando Google termina el login)
+      supabase.auth.onAuthStateChange((event, session) => {
+        console.log('🔐 Evento de autenticación:', event);
+        
+        if (event === 'SIGNED_IN' && session) {
+          state.currentUser = session.user;
+          state.isAdmin = session.user.email === CONFIG.adminEmail;
+          $("user-name").textContent = session.user.email.split("@")[0];
+          Router.toDashboard();
+        } else if (event === 'SIGNED_OUT') {
+          state.currentUser = null;
+          Router.toLogin();
+        }
+      });
+
+      // Verificar sesión inicial (por si ya estaba logueado)
+      AuthModule.checkSession();
+
+// --- GESTO PARA CERRAR EL MENÚ DESLIZANDO ---
+let touchStartX = 0;
+let touchEndX = 0;
+
+const sidebar = $("sidebar");
+
+sidebar.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+sidebar.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleGesture();
+}, false);
+
+function handleGesture() {
+    // Si el deslizamiento de derecha a izquierda es mayor a 50px, cerramos
+    if (touchStartX - touchEndX > 50) {
+        sidebar.classList.remove("active");
+        $("sidebar-overlay").classList.remove("active");
+    }
+}
+          
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
