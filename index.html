@@ -68,12 +68,20 @@
       }
 
       @keyframes bounce-horizontal {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-5px); }
-}
-.animate-bounce-horizontal {
-  animation: bounce-horizontal 1.5s infinite;
-}
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(-5px); }
+      }
+      .animate-bounce-horizontal {
+        animation: bounce-horizontal 1.5s infinite;
+      }
+
+      @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .pulse-dot {
+        animation: pulse-dot 2s ease-in-out infinite;
+      }
       
     </style>
   </head>
@@ -83,12 +91,11 @@
     <!-- LOGIN -->
     <div id="view-login" class="view active items-center justify-center px-4">
       <div class="p-6 sm:p-8 bg-primary-dark rounded-xl w-full max-w-sm shadow-2xl flex flex-col items-center">
-    <img
-  src="https://raw.githubusercontent.com/Compualextech24/PAGINADEPELICULAS/main/logotipo.PNG"
-  alt="AXO Movies"
-  class="w-64 sm:w-72 h-auto mx-auto mb-2 drop-shadow-xl"
-/>
-
+        <img
+          src="https://raw.githubusercontent.com/Compualextech24/PAGINADEPELICULAS/main/logotipo.PNG"
+          alt="AXO Movies"
+          class="w-64 sm:w-72 h-auto mx-auto mb-2 drop-shadow-xl"
+        />
 
         <h2 class="text-sm sm:text-base font-bold text-accent-blue text-center mb-8">
           🎬 MOVIES ONLINE FREE 🎬
@@ -152,9 +159,13 @@
         class="fixed inset-y-0 left-0 w-52 bg-secondary-dark border-r border-gray-700 p-4 custom-scroll overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300"
       >
         <div class="flex items-center justify-end mb-6">
-          <h2 class="text-xs font-bold text-accent-blue">
-            <span id="user-name">Usuario</span>!
-          </h2>
+          <div class="flex items-center space-x-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500 pulse-dot"></span>
+            </span>
+            <h2 class="text-xs font-bold text-accent-blue">Online</h2>
+          </div>
         </div>
         <nav class="space-y-6">
           <button
@@ -216,50 +227,50 @@
             🚪 Cerrar Sesión
           </button>
 
-<div class="mt-12 mb-10 flex flex-col items-center opacity-60 md:hidden border-t border-gray-700/30 pt-6">
-  <p class="text-[10px] uppercase tracking-widest mb-2 text-accent-blue font-bold">Deslizar para cerrar</p>
-  <svg class="w-6 h-6 animate-bounce-horizontal text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
-  </svg>
-</div>
+          <div class="mt-12 mb-10 flex flex-col items-center opacity-60 md:hidden border-t border-gray-700/30 pt-6">
+            <p class="text-[10px] uppercase tracking-widest mb-2 text-accent-blue font-bold">Deslizar para cerrar</p>
+            <svg class="w-6 h-6 animate-bounce-horizontal text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+            </svg>
+          </div>
           
         </nav>
       </aside>
 
       <main class="md:ml-64 p-4 md:p-6">
-       <header class="h-16 flex items-center justify-center border-b border-gray-700/50 mb-6 sticky top-0 bg-secondary-dark z-10 w-full">
+        <header class="h-16 flex items-center justify-center border-b border-gray-700/50 mb-6 sticky top-0 bg-secondary-dark z-10 w-full">
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-          CATÁLOGO PELICULAS
+            CATÁLOGO PELICULAS
           </h1>
         </header>
 
         <section>
-       
-           <div class="flex items-center justify-center mb-4 gap-3 w-full">
-   <h3 class="text-lg sm:text-xl font-semibold text-gray-400">
-      PELÍCULAS EN CATÁLOGO
-   </h3>
-   <div class="text-sm text-cyan-400 font-semibold">
-      <span id="movie-count">0</span> referencias
-   </div>
-</div>
-         <div id="loading-message" class="w-full text-center py-12 text-gray-500">
-   <div class="inline-block animate-spin ..."></div>
-   <p class="mt-2">Cargando catálogo...</p>
-</div>
+          <div class="flex items-center justify-center mb-4 gap-3 w-full">
+            <h3 class="text-lg sm:text-xl font-semibold text-gray-400">
+              PELÍCULAS EN CATÁLOGO
+            </h3>
+            <div class="text-sm text-cyan-400 font-semibold">
+              <span id="movie-count">0</span> referencias
+            </div>
+          </div>
+          <div id="loading-message" class="w-full text-center py-12 text-gray-500">
+            <div class="inline-block animate-spin ..."></div>
+            <p class="mt-2">Cargando catálogo...</p>
+          </div>
 
           <div id="catalog-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
         </section>
       </main>
     </div>
 
-    <!-- MODAL CREAR -->
+    <!-- MODAL CREAR/EDITAR -->
     <div id="modal-create" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 9999">
       <div class="bg-primary-dark p-6 w-full max-w-lg rounded-xl shadow-2xl custom-scroll max-h-[90vh] overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-6 text-accent-blue text-center">
+        <h2 id="modal-title" class="text-2xl font-bold mb-6 text-accent-blue text-center">
           CREAR NUEVA REFERENCIA
         </h2>
         <form id="movie-form" class="space-y-4">
+          <input type="hidden" id="movie-id" />
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Título</label>
             <input type="text" id="titulo" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg focus:ring-accent-blue focus:border-accent-blue text-white"/>
@@ -304,8 +315,9 @@
               <label for="poster_file" class="cursor-pointer px-4 py-2 text-sm font-medium text-gray-800 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg hover:from-yellow-300 hover:to-yellow-500 transition">
                 Seleccionar
               </label>
-              <input type="file" id="poster_file" accept="image/*" required class="hidden"/>
+              <input type="file" id="poster_file" accept="image/*" class="hidden"/>
             </div>
+            <p class="text-xs text-gray-400 mt-1" id="poster-note"></p>
           </div>
           <div class="flex space-x-3 pt-4">
             <button type="button" id="cancel-create-btn" class="flex-1 px-4 py-2 text-sm bg-gray-700 rounded-lg hover:bg-gray-600 transition">
@@ -335,12 +347,12 @@
     <script type="module">
       import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-     const CONFIG = {
-  supabaseUrl: "https://fzslqxsclswkedlohgtr.supabase.co",
-  supabaseKey: "sb_publishable_NXZ0khgr4LjBMgil_to20A_ui04ZkHz",
-  table: "catalogo_peliculas",
-  adminEmail: "compualextech24@gmail.com",
-};
+      const CONFIG = {
+        supabaseUrl: "https://fzslqxsclswkedlohgtr.supabase.co",
+        supabaseKey: "sb_publishable_NXZ0khgr4LjBMgil_to20A_ui04ZkHz",
+        table: "catalogo_peliculas",
+        adminEmail: "compualextech24@gmail.com",
+      };
 
       const supabase = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
       const $ = (id) => document.getElementById(id);
@@ -350,6 +362,7 @@
         filteredMovies: [],
         currentUser: null,
         isAdmin: false,
+        editingMovie: null,
       };
 
       const Router = {
@@ -388,7 +401,6 @@
           if (data.session) {
             state.currentUser = data.session.user;
             state.isAdmin = data.session.user.email === CONFIG.adminEmail;
-            $("user-name").textContent = data.session.user.email.split("@")[0];
             Router.toDashboard();
           } else {
             Router.toLogin();
@@ -422,7 +434,7 @@
           grid.innerHTML = "";
 
           if (state.filteredMovies.length === 0) {
-          grid.innerHTML = '<p class="col-span-full w-full text-center text-gray-400 py-10">No hay películas en esta categoría</p>';
+            grid.innerHTML = '<p class="col-span-full w-full text-center text-gray-400 py-10">No hay películas en esta categoría</p>';
             return;
           }
 
@@ -435,11 +447,10 @@
             const contentDiv = document.createElement("div");
             contentDiv.className = "p-2 cursor-pointer";
             contentDiv.onclick = () => {
-  // Cerrar sidebar si está abierto
-  $("sidebar").classList.remove("active");
-  $("sidebar-overlay").classList.remove("active");
-  UIModule.showDetails(movie);
-};
+              $("sidebar").classList.remove("active");
+              $("sidebar-overlay").classList.remove("active");
+              UIModule.showDetails(movie);
+            };
             contentDiv.innerHTML = `
               <img src="${movie.foto_url}" class="poster-image rounded-lg mb-2" alt="${movie.titulo}"/>
               <p class="text-sm font-semibold text-center truncate">${movie.titulo}</p>
@@ -449,8 +460,24 @@
             card.appendChild(contentDiv);
 
             if (state.isAdmin) {
+              const btnContainer = document.createElement("div");
+              btnContainer.className = "absolute top-2 left-2 right-2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10";
+
+              const editBtn = document.createElement("button");
+              editBtn.className = "bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg shadow-lg";
+              editBtn.title = "Editar película";
+              editBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              `;
+              editBtn.onclick = (e) => {
+                e.stopPropagation();
+                UIModule.openEditModal(movie);
+              };
+
               const deleteBtn = document.createElement("button");
-              deleteBtn.className = "absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10";
+              deleteBtn.className = "bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow-lg";
               deleteBtn.title = "Eliminar película";
               deleteBtn.innerHTML = `
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -461,31 +488,50 @@
                 e.stopPropagation();
                 CatalogModule.deleteMovie(movie.id);
               };
-              card.appendChild(deleteBtn);
+
+              btnContainer.appendChild(editBtn);
+              btnContainer.appendChild(deleteBtn);
+              card.appendChild(btnContainer);
             }
 
             grid.appendChild(card);
           });
         },
 
-        async saveMovie(formData) {
+        async saveMovie(formData, isEdit = false) {
           const file = $("poster_file").files[0];
-          if (!file) throw new Error("Selecciona una imagen");
+          let fotoUrl = formData.foto_url;
 
-          const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-          const { error: uploadError } = await supabase.storage.from("portadas").upload(fileName, file);
-          if (uploadError) throw uploadError;
+          if (file) {
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+            const { error: uploadError } = await supabase.storage.from("portadas").upload(fileName, file);
+            if (uploadError) throw uploadError;
 
-          const { data: urlData } = supabase.storage.from("portadas").getPublicUrl(fileName);
+            const { data: urlData } = supabase.storage.from("portadas").getPublicUrl(fileName);
+            fotoUrl = urlData.publicUrl;
+          }
 
           const payload = {
-            ...formData,
-            foto_url: urlData.publicUrl,
-            fecha_creacion: new Date().toISOString(),
+            titulo: formData.titulo,
+            categoria: formData.categoria,
+            director_o_anio: formData.director_o_anio,
+            resena: formData.resena,
+            link_url: formData.link_url,
+            clave: formData.clave,
+            foto_url: fotoUrl,
           };
 
-          const { error } = await supabase.from(CONFIG.table).insert([payload]);
-          if (error) throw error;
+          if (isEdit) {
+            const { error } = await supabase
+              .from(CONFIG.table)
+              .update(payload)
+              .eq("id", formData.id);
+            if (error) throw error;
+          } else {
+            payload.fecha_creacion = new Date().toISOString();
+            const { error } = await supabase.from(CONFIG.table).insert([payload]);
+            if (error) throw error;
+          }
 
           this.loadCatalog();
         },
@@ -535,6 +581,22 @@
           }
         },
 
+        openEditModal(movie) {
+          state.editingMovie = movie;
+          $("modal-title").textContent = "EDITAR PELÍCULA";
+          $("movie-id").value = movie.id;
+          $("titulo").value = movie.titulo;
+          $("categoria").value = movie.categoria;
+          $("director_o_anio").value = movie.director_o_anio;
+          $("resena").value = movie.resena;
+          $("link_url").value = movie.link_url;
+          $("clave").value = movie.clave;
+          $("poster-preview").src = movie.foto_url;
+          $("poster-note").textContent = "Deja vacío para mantener el póster actual";
+          $("poster_file").removeAttribute("required");
+          this.showModal("modal-create");
+        },
+
         showDetails(movie) {
           const content = $("details-content");
           if (!content) return;
@@ -576,7 +638,7 @@
       window.UIModule = UIModule;
       window.CatalogModule = CatalogModule;
 
-     $("menu-toggle").addEventListener("click", (e) => {
+      $("menu-toggle").addEventListener("click", (e) => {
         e.stopPropagation();
         $("sidebar").classList.toggle("active");
         $("sidebar-overlay").classList.toggle("active");
@@ -605,8 +667,13 @@
       $("logout-btn").addEventListener("click", () => AuthModule.logout());
 
       $("create-btn").addEventListener("click", () => {
+        state.editingMovie = null;
+        $("modal-title").textContent = "CREAR NUEVA REFERENCIA";
         $("movie-form").reset();
+        $("movie-id").value = "";
         $("poster-preview").src = "https://placehold.co/80x112/334155/E2E8F0?text=+";
+        $("poster-note").textContent = "";
+        $("poster_file").setAttribute("required", "required");
         UIModule.showModal("modal-create");
       });
 
@@ -617,19 +684,23 @@
         e.preventDefault();
         const status = $("form-status");
         status.textContent = "Guardando...";
+        status.className = "text-sm text-center text-gray-400";
 
         try {
+          const isEdit = !!state.editingMovie;
           const formData = {
+            id: $("movie-id").value,
             titulo: $("titulo").value,
             categoria: $("categoria").value,
             director_o_anio: $("director_o_anio").value,
             resena: $("resena").value,
             link_url: $("link_url").value,
             clave: $("clave").value,
+            foto_url: state.editingMovie ? state.editingMovie.foto_url : "",
           };
 
-          await CatalogModule.saveMovie(formData);
-          status.textContent = "✅ ¡Guardado!";
+          await CatalogModule.saveMovie(formData, isEdit);
+          status.textContent = isEdit ? "✅ ¡Actualizado!" : "✅ ¡Guardado!";
           status.className = "text-sm text-center text-green-400";
 
           setTimeout(() => {
@@ -661,18 +732,10 @@
         });
       });
 
-      // ============================================
-      // 🚀 INICIALIZACIÓN CON LISTENER DE AUTH
-      // ============================================
-      
-      // Escuchar cambios de autenticación (esto detecta cuando Google termina el login)
       supabase.auth.onAuthStateChange((event, session) => {
-        console.log('🔐 Evento de autenticación:', event);
-        
         if (event === 'SIGNED_IN' && session) {
           state.currentUser = session.user;
           state.isAdmin = session.user.email === CONFIG.adminEmail;
-          $("user-name").textContent = session.user.email.split("@")[0];
           Router.toDashboard();
         } else if (event === 'SIGNED_OUT') {
           state.currentUser = null;
@@ -680,48 +743,23 @@
         }
       });
 
-      // Verificar sesión inicial (por si ya estaba logueado)
       AuthModule.checkSession();
 
-// --- GESTO PARA CERRAR EL MENÚ DESLIZANDO ---
-let touchStartX = 0;
-let touchEndX = 0;
+      let touchStartX = 0;
+      let touchEndX = 0;
+      const sidebar = $("sidebar");
 
-const sidebar = $("sidebar");
+      sidebar.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, false);
 
-sidebar.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-}, false);
-
-sidebar.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleGesture();
-}, false);
-
-function handleGesture() {
-    // Si el deslizamiento de derecha a izquierda es mayor a 50px, cerramos
-    if (touchStartX - touchEndX > 50) {
-        sidebar.classList.remove("active");
-        $("sidebar-overlay").classList.remove("active");
-    }
-}
-          
+      sidebar.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 50) {
+          sidebar.classList.remove("active");
+          $("sidebar-overlay").classList.remove("active");
+        }
+      }, false);
     </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
