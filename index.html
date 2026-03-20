@@ -413,37 +413,48 @@
           $("loading-message").classList.remove("hidden");
           $("catalog-grid").innerHTML = "";
 
-          const { data, error } = await supabase
-            .from(CONFIG.table)
-            .select("*")
-            .order("fecha_creacion", { ascending: false });
+          try {
+            const { data, error } = await supabase
+              .from(CONFIG.table)
+              .select("*")
+              .order("fecha_creacion", { ascending: false });
 
-          if (error) {
-            $("catalog-grid").innerHTML = '<p class="col-span-full text-center text-red-400">Error al cargar</p>';
-            return;
+            if (error) throw error;
+
+            // ✅ Guarda en localStorage cada vez que carga con internet
+            localStorage.setItem("axo_movies_cache", JSON.stringify(data));
+
+            $("loading-message").classList.add("hidden");
+            state.movies = data || [];
+            state.filteredMovies = state.movies;
+            this.renderMovies();
+
+          } catch (error) {
+            // ✅ Sin internet → carga desde localStorage
+            const cached = localStorage.getItem("axo_movies_cache");
+            if (cached) {
+              $("loading-message").classList.add("hidden");
+              state.movies = JSON.parse(cached);
+              state.filteredMovies = state.movies;
+              this.renderMovies();
+            } else {
+              $("loading-message").classList.add("hidden");
+              $("catalog-grid").innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">Sin conexión y sin datos guardados aún. Entra una vez con internet primero.</p>';
+            }
           }
-
-          $("loading-message").classList.add("hidden");
-          state.movies = data || [];
-          state.filteredMovies = state.movies;
-          this.renderMovies();
         },
 
         renderMovies() {
           const grid = $("catalog-grid");
           grid.innerHTML = "";
-
           if (state.filteredMovies.length === 0) {
             grid.innerHTML = '<p class="col-span-full w-full text-center text-gray-400 py-10">No hay películas en esta categoría</p>';
             return;
           }
-
           $("movie-count").textContent = state.filteredMovies.length;
-
           state.filteredMovies.forEach((movie) => {
             const card = document.createElement("div");
             card.className = "bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group";
-
             const contentDiv = document.createElement("div");
             contentDiv.className = "p-2 cursor-pointer";
             contentDiv.onclick = () => {
@@ -456,13 +467,10 @@
               <p class="text-sm font-semibold text-center truncate">${movie.titulo}</p>
               <p class="text-xs text-gray-400 text-center">${movie.director_o_anio}</p>
             `;
-
             card.appendChild(contentDiv);
-
             if (state.isAdmin) {
               const btnContainer = document.createElement("div");
               btnContainer.className = "absolute top-2 left-2 right-2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10";
-
               const editBtn = document.createElement("button");
               editBtn.className = "bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg shadow-lg";
               editBtn.title = "Editar película";
