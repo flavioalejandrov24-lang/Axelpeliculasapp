@@ -387,7 +387,20 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Director o Año</label>
-            <input type="text" id="director_o_anio" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white"/>
+            <select id="director_o_anio" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white">
+              <option value="">Selecciona el año</option>
+              <option>1998</option><option>1999</option><option>2000</option>
+              <option>2001</option><option>2002</option><option>2003</option>
+              <option>2004</option><option>2005</option><option>2006</option>
+              <option>2007</option><option>2008</option><option>2009</option>
+              <option>2010</option><option>2011</option><option>2012</option>
+              <option>2013</option><option>2014</option><option>2015</option>
+              <option>2016</option><option>2017</option><option>2018</option>
+              <option>2019</option><option>2020</option><option>2021</option>
+              <option>2022</option><option>2023</option><option>2024</option>
+              <option>2025</option><option>2026</option><option>2027</option>
+              <option>2028</option><option>2029</option><option>2030</option>
+            </select>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Reseña</label>
@@ -671,6 +684,7 @@
             `;
             card.appendChild(contentDiv);
 
+            // ── "Ver detalles" siempre visible ──
             const verBtn = document.createElement("button");
             verBtn.className = "btn-ver-detalles";
             verBtn.textContent = "▶ Ver detalles";
@@ -681,25 +695,36 @@
             };
             card.appendChild(verBtn);
 
-            if (state.isAdmin) {
-              const btnContainer = document.createElement("div");
-              btnContainer.className = "absolute top-2 left-2 right-2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10";
+            // ── Botones Editar / Eliminar debajo de "Ver detalles" ──
+            // Editar: solo el dueño del aporte
+            // Eliminar: el dueño O el admin
+            const isOwner = state.currentUser && movie.subido_por === state.currentUser.email;
+            const canEdit = isOwner;
+            const canDelete = isOwner || state.isAdmin;
 
-              const editBtn = document.createElement("button");
-              editBtn.className = "bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg shadow-lg";
-              editBtn.title = "Editar";
-              editBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`;
-              editBtn.onclick = e => { e.stopPropagation(); UIModule.openEditModal(movie); };
+            if (canEdit || canDelete) {
+              const actionRow = document.createElement("div");
+              actionRow.className = "flex gap-0 border-t border-gray-700/60";
 
-              const deleteBtn = document.createElement("button");
-              deleteBtn.className = "bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow-lg";
-              deleteBtn.title = "Eliminar";
-              deleteBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
-              deleteBtn.onclick = e => { e.stopPropagation(); CatalogModule.deleteMovie(movie.id); };
+              if (canEdit) {
+                const editBtn = document.createElement("button");
+                editBtn.className = `flex-1 flex items-center justify-center gap-1 py-2 text-xs font-semibold text-blue-400 hover:bg-blue-900/30 transition ${canDelete ? "border-r border-gray-700/60" : ""}`;
+                editBtn.title = "Editar mi aporte";
+                editBtn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar`;
+                editBtn.onclick = e => { e.stopPropagation(); UIModule.openEditModal(movie); };
+                actionRow.appendChild(editBtn);
+              }
 
-              btnContainer.appendChild(editBtn);
-              btnContainer.appendChild(deleteBtn);
-              card.appendChild(btnContainer);
+              if (canDelete) {
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "flex-1 flex items-center justify-center gap-1 py-2 text-xs font-semibold text-red-400 hover:bg-red-900/30 transition";
+                deleteBtn.title = "Eliminar";
+                deleteBtn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Eliminar`;
+                deleteBtn.onclick = e => { e.stopPropagation(); CatalogModule.deleteMovie(movie.id); };
+                actionRow.appendChild(deleteBtn);
+              }
+
+              card.appendChild(actionRow);
             }
 
             grid.appendChild(card);
@@ -745,14 +770,16 @@
         },
 
         async deleteMovie(movieId) {
-          if (!state.isAdmin) { alert("No tienes permisos"); return; }
-          if (!confirm("¿Estás seguro de eliminar?")) return;
+          const movie = state.movies.find(m => m.id === movieId);
+          const isOwner = state.currentUser && movie && movie.subido_por === state.currentUser.email;
+          if (!isOwner && !state.isAdmin) { showToast("❌ No tienes permisos para eliminar.", true); return; }
+          if (!confirm("¿Estás seguro de eliminar esta referencia?")) return;
           try {
             const { error } = await supabase.from(CONFIG.table).delete().eq("id", movieId);
             if (error) throw error;
-            alert("✅ Eliminado correctamente");
+            showToast("✅ Referencia eliminada correctamente");
             this.loadCatalog();
-          } catch(error) { alert("❌ Error: " + error.message); }
+          } catch(error) { showToast("❌ Error: " + error.message, true); }
         },
       };
 
@@ -772,10 +799,24 @@
         openEditModal(movie) {
           state.editingMovie = movie;
           $("modal-title").textContent = "EDITAR PELÍCULA";
-          $("movie-id").value = movie.id; $("titulo").value = movie.titulo;
-          $("categoria").value = movie.categoria; $("director_o_anio").value = movie.director_o_anio;
-          $("resena").value = movie.resena; $("link_url").value = movie.link_url;
-          $("clave").value = movie.clave; $("poster-preview").src = movie.foto_url;
+          $("movie-id").value = movie.id;
+          $("titulo").value = movie.titulo;
+          $("categoria").value = movie.categoria;
+          // director_o_anio es ahora un select; intentamos seleccionar el valor guardado
+          const anioSelect = $("director_o_anio");
+          anioSelect.value = movie.director_o_anio;
+          // Si el valor no existe en las opciones (texto libre antiguo) lo agregamos temporalmente
+          if (anioSelect.value !== movie.director_o_anio) {
+            const opt = document.createElement("option");
+            opt.value = movie.director_o_anio;
+            opt.textContent = movie.director_o_anio;
+            anioSelect.prepend(opt);
+            anioSelect.value = movie.director_o_anio;
+          }
+          $("resena").value = movie.resena;
+          $("link_url").value = movie.link_url;
+          $("clave").value = movie.clave;
+          $("poster-preview").src = movie.foto_url;
           $("poster-note").textContent = "Deja vacío para mantener el póster actual";
           $("poster_file").removeAttribute("required");
           this.showModal("modal-create");
