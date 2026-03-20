@@ -25,7 +25,7 @@
         aspect-ratio: 2/3;
         object-fit: cover;
         width: 100%;
-        height: 240px;
+        height: 200px;
       }
       .custom-scroll::-webkit-scrollbar { width: 8px; }
       .custom-scroll::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
@@ -88,12 +88,48 @@
         background-color: #16a34a33;
         border-color: #16a34a88;
       }
+
+      /* Botón Ver detalles degradado */
+      .btn-ver-detalles {
+        background: linear-gradient(135deg, #38bdf8 0%, #e0f2fe 60%, #ffffff 100%);
+        color: #0c4a6e;
+        font-weight: 700;
+        font-size: 0.72rem;
+        border-radius: 0 0 12px 12px;
+        padding: 6px 0;
+        width: 100%;
+        text-align: center;
+        transition: opacity 0.2s, transform 0.15s;
+        letter-spacing: 0.02em;
+        border: none;
+        cursor: pointer;
+      }
+      .btn-ver-detalles:hover {
+        opacity: 0.88;
+        transform: scale(1.02);
+      }
+
+      /* Regla animada en modal */
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .rule-item {
+        animation: fadeInUp 0.4s ease both;
+      }
+      .rule-item:nth-child(1) { animation-delay: 0.05s; }
+      .rule-item:nth-child(2) { animation-delay: 0.12s; }
+      .rule-item:nth-child(3) { animation-delay: 0.19s; }
+      .rule-item:nth-child(4) { animation-delay: 0.26s; }
+      .rule-item:nth-child(5) { animation-delay: 0.33s; }
     </style>
   </head>
   <body class="bg-secondary-dark text-white font-sans min-h-screen">
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-    <!-- LOGIN -->
+    <!-- ══════════════════════════════════════
+         LOGIN
+    ══════════════════════════════════════ -->
     <div id="view-login" class="view active items-center justify-center px-4">
       <div class="p-6 sm:p-8 bg-primary-dark rounded-xl w-full max-w-sm shadow-2xl flex flex-col items-center">
         <img src="logotipo.png" alt="AXO Movies" class="w-64 sm:w-72 h-auto mx-auto mb-2 drop-shadow-xl"/>
@@ -114,7 +150,9 @@
       </div>
     </div>
 
-    <!-- DASHBOARD -->
+    <!-- ══════════════════════════════════════
+         DASHBOARD
+    ══════════════════════════════════════ -->
     <div id="view-dashboard" class="view w-full min-h-screen">
       <button id="menu-toggle" class="md:hidden fixed top-0 left-0 z-30 p-2 bg-accent-blue rounded-r-lg shadow-lg">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,7 +160,6 @@
         </svg>
       </button>
 
-      <!-- SIDEBAR w-64 -->
       <aside id="sidebar"
         class="fixed inset-y-0 left-0 w-64 bg-secondary-dark border-r border-gray-700 p-4 custom-scroll overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
         <div class="flex items-center justify-end mb-6">
@@ -150,78 +187,60 @@
               <span class="text-[10px] text-green-400 opacity-70">⬇ offline</span>
             </div>
 
-            <!-- TODOS -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="" class="genre-link active flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🎬 Todos</a>
               <button class="download-btn" data-cache-category="" title="Guardar todos offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- ACCIÓN -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Acción" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">💥 Acción</a>
               <button class="download-btn" data-cache-category="Acción" title="Guardar Acción offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- INFANTILES -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Infantiles" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🎌 Infantiles</a>
               <button class="download-btn" data-cache-category="Infantiles" title="Guardar Infantiles offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- COMEDIA -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Comedia" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">😂 Comedia</a>
               <button class="download-btn" data-cache-category="Comedia" title="Guardar Comedia offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- TERROR -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Terror" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">👻 Terror</a>
               <button class="download-btn" data-cache-category="Terror" title="Guardar Terror offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- DRAMA -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Drama" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🎭 Drama</a>
               <button class="download-btn" data-cache-category="Drama" title="Guardar Drama offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- FICCIÓN (data-category sigue siendo "Ciencia Ficción" para no romper los datos en Supabase) -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Ciencia Ficción" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🚀 Ficción</a>
               <button class="download-btn" data-cache-category="Ciencia Ficción" title="Guardar Ficción offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- SUPERHEROES -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Superheroes" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🤖 Superheroes</a>
               <button class="download-btn" data-cache-category="Superheroes" title="Guardar Superheroes offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
-            <!-- CURSOS -->
             <div class="flex items-center gap-2">
               <a href="#" data-category="Cursos" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">📚 Cursos</a>
               <button class="download-btn" data-cache-category="Cursos" title="Guardar Cursos offline">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               </button>
             </div>
-
           </div>
 
           <button id="logout-btn" class="w-full p-2 text-lg text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-md transition">
@@ -237,7 +256,6 @@
         </nav>
       </aside>
 
-      <!-- ml-72 para coincidir con w-64 del sidebar -->
       <main class="md:ml-72 p-4 md:p-6">
         <header class="h-16 flex items-center justify-center border-b border-gray-700/50 mb-6 sticky top-0 bg-secondary-dark z-10 w-full">
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
@@ -263,7 +281,82 @@
       </main>
     </div>
 
-    <!-- MODAL CREAR/EDITAR -->
+    <!-- ══════════════════════════════════════
+         MODAL REGLAS (aparece antes del formulario)
+    ══════════════════════════════════════ -->
+    <div id="modal-rules" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4" style="z-index: 9999">
+      <div class="bg-primary-dark w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-cyan-600 to-blue-700 px-6 py-4 flex items-center gap-3">
+          <span class="text-3xl">📋</span>
+          <div>
+            <h2 class="text-lg font-extrabold text-white tracking-wide">Reglas de la Comunidad</h2>
+            <p class="text-xs text-cyan-200">Lee antes de subir tu aporte</p>
+          </div>
+        </div>
+
+        <!-- Reglas -->
+        <div class="px-6 py-5 space-y-3 custom-scroll max-h-[60vh] overflow-y-auto">
+
+          <div class="rule-item flex items-start gap-3 bg-blue-900/30 border border-blue-700/40 rounded-xl p-3">
+            <span class="text-2xl mt-0.5">☁️</span>
+            <div>
+              <p class="text-sm font-bold text-accent-blue">Solo plataformas de nube oficiales</p>
+              <p class="text-xs text-gray-300 mt-0.5">Sube tus archivos únicamente a <span class="text-white font-semibold">MEGA, Google Drive, OneDrive, Terabox</span> u otras plataformas reconocidas. No se aceptan links de sitios desconocidos o sospechosos.</p>
+            </div>
+          </div>
+
+          <div class="rule-item flex items-start gap-3 bg-green-900/30 border border-green-700/40 rounded-xl p-3">
+            <span class="text-2xl mt-0.5">🎬</span>
+            <div>
+              <p class="text-sm font-bold text-green-400">Formatos compatibles con Android</p>
+              <p class="text-xs text-gray-300 mt-0.5">Usa formatos de video reproducibles: <span class="text-white font-semibold">MP4, MKV, AVI, MOV</span>. El MP4 es el más recomendado para mejor compatibilidad.</p>
+            </div>
+          </div>
+
+          <div class="rule-item flex items-start gap-3 bg-red-900/30 border border-red-700/40 rounded-xl p-3">
+            <span class="text-2xl mt-0.5">🚫</span>
+            <div>
+              <p class="text-sm font-bold text-red-400">Cero archivos dañinos</p>
+              <p class="text-xs text-gray-300 mt-0.5">Queda estrictamente prohibido compartir <span class="text-white font-semibold">ejecutables (.exe), archivos comprimidos con virus, o links que redirijan a sitios maliciosos</span>. El incumplimiento resulta en eliminación del aporte.</p>
+            </div>
+          </div>
+
+          <div class="rule-item flex items-start gap-3 bg-yellow-900/30 border border-yellow-700/40 rounded-xl p-3">
+            <span class="text-2xl mt-0.5">🤝</span>
+            <div>
+              <p class="text-sm font-bold text-yellow-400">Somos una comunidad de aportes</p>
+              <p class="text-xs text-gray-300 mt-0.5">Esta plataforma es un espacio colaborativo donde todos compartimos películas, series y cursos. <span class="text-white font-semibold">Tu aporte queda registrado con tu nombre</span> para dar crédito a quien contribuye.</p>
+            </div>
+          </div>
+
+          <div class="rule-item flex items-start gap-3 bg-purple-900/30 border border-purple-700/40 rounded-xl p-3">
+            <span class="text-2xl mt-0.5">✅</span>
+            <div>
+              <p class="text-sm font-bold text-purple-400">Consejos para un buen aporte</p>
+              <p class="text-xs text-gray-300 mt-0.5">Completa bien todos los campos: título correcto, año, reseña clara y póster de calidad. <span class="text-white font-semibold">Un buen aporte ayuda a toda la comunidad.</span></p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botones -->
+        <div class="px-6 py-4 flex gap-3 border-t border-gray-700/50">
+          <button id="rules-cancel-btn"
+            class="flex-1 py-2 text-sm bg-gray-700 rounded-lg hover:bg-gray-600 transition font-semibold">
+            Cancelar
+          </button>
+          <button id="rules-accept-btn"
+            class="flex-1 py-2 text-sm font-bold rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 transition text-white shadow-lg">
+            ✅ Entendido, continuar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         MODAL CREAR/EDITAR
+    ══════════════════════════════════════ -->
     <div id="modal-create" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 9999">
       <div class="bg-primary-dark p-6 w-full max-w-lg rounded-xl shadow-2xl custom-scroll max-h-[90vh] overflow-y-auto">
         <h2 id="modal-title" class="text-2xl font-bold mb-6 text-accent-blue text-center">CREAR NUEVA REFERENCIA</h2>
@@ -320,14 +413,16 @@
           </div>
           <div class="flex space-x-3 pt-4">
             <button type="button" id="cancel-create-btn" class="flex-1 px-4 py-2 text-sm bg-gray-700 rounded-lg hover:bg-gray-600 transition">Cancelar</button>
-            <button type="submit" class="flex-1 px-4 py-2 text-sm bg-accent-blue rounded-lg hover:bg-blue-500 transition">Guardar</button>
+            <button type="submit" class="flex-1 px-4 py-2 text-sm bg-accent-blue rounded-lg hover:bg-blue-500 transition font-bold">Guardar</button>
           </div>
           <p id="form-status" class="text-sm text-center"></p>
         </form>
       </div>
     </div>
 
-    <!-- MODAL DETALLES -->
+    <!-- ══════════════════════════════════════
+         MODAL DETALLES
+    ══════════════════════════════════════ -->
     <div id="modal-details" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 9999">
       <div class="bg-primary-dark p-6 w-full max-w-lg rounded-xl shadow-2xl custom-scroll max-h-[90vh] overflow-y-auto">
         <button id="close-details-btn" class="float-right text-gray-400 hover:text-white">
@@ -339,6 +434,9 @@
       </div>
     </div>
 
+    <!-- ══════════════════════════════════════
+         JAVASCRIPT
+    ══════════════════════════════════════ -->
     <script type="module">
       import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -358,6 +456,14 @@
         editingMovie: null, isOffline: false,
       };
 
+      // ─── Extrae el nombre de usuario del email ───
+      // "compualextech24@gmail.com" → "compualextech24"
+      function emailToUsername(email) {
+        if (!email) return "Anónimo";
+        return email.split("@")[0];
+      }
+
+      // ─── CACHE ───
       const Cache = {
         key(category) { return "axo_cache_" + (category === "" ? "todos" : category); },
         save(category, data) {
@@ -423,6 +529,7 @@
         toast._timer = setTimeout(() => { toast.style.opacity = "0"; }, 3000);
       }
 
+      // ─── ROUTER ───
       const Router = {
         showView(viewId) {
           document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
@@ -432,6 +539,7 @@
         toDashboard() { this.showView("view-dashboard"); CatalogModule.loadCatalog(); },
       };
 
+      // ─── AUTH ───
       const AuthModule = {
         async loginWithGoogle() {
           const { error } = await supabase.auth.signInWithOAuth({
@@ -465,6 +573,7 @@
         },
       };
 
+      // ─── CATÁLOGO ───
       const CatalogModule = {
         async loadCatalog(category = "") {
           $("loading-message").classList.remove("hidden");
@@ -514,45 +623,71 @@
         renderMovies() {
           const grid = $("catalog-grid");
           grid.innerHTML = "";
+
           if (state.filteredMovies.length === 0) {
             grid.innerHTML = '<p class="col-span-full w-full text-center text-gray-400 py-10">No hay películas en esta categoría</p>';
             $("movie-count").textContent = 0;
             return;
           }
+
           $("movie-count").textContent = state.filteredMovies.length;
+
           state.filteredMovies.forEach(movie => {
+            const username = movie.subido_por ? emailToUsername(movie.subido_por) : null;
+
             const card = document.createElement("div");
-            card.className = "bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group";
+            card.className = "bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group flex flex-col overflow-hidden";
+
+            // ── Zona clickeable (imagen + datos) ──
             const contentDiv = document.createElement("div");
-            contentDiv.className = "p-2 cursor-pointer";
+            contentDiv.className = "p-2 cursor-pointer flex-1";
             contentDiv.onclick = () => {
               $("sidebar").classList.remove("active");
               $("sidebar-overlay").classList.remove("active");
               UIModule.showDetails(movie);
             };
+
             contentDiv.innerHTML = `
               <img src="${movie.foto_url}" class="poster-image rounded-lg mb-2" alt="${movie.titulo}"/>
-              <p class="text-sm font-semibold text-center truncate">${movie.titulo}</p>
+              <p class="text-sm font-semibold text-center truncate px-1">${movie.titulo}</p>
               <p class="text-xs text-gray-400 text-center">${movie.director_o_anio}</p>
+              ${username ? `<p class="text-[10px] text-cyan-500 text-center mt-0.5 truncate px-1">By: ${username}</p>` : ""}
             `;
             card.appendChild(contentDiv);
+
+            // ── Botón Ver detalles ──
+            const verBtn = document.createElement("button");
+            verBtn.className = "btn-ver-detalles";
+            verBtn.textContent = "▶ Ver detalles";
+            verBtn.onclick = () => {
+              $("sidebar").classList.remove("active");
+              $("sidebar-overlay").classList.remove("active");
+              UIModule.showDetails(movie);
+            };
+            card.appendChild(verBtn);
+
+            // ── Botones admin (editar/eliminar) ──
             if (state.isAdmin) {
               const btnContainer = document.createElement("div");
               btnContainer.className = "absolute top-2 left-2 right-2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10";
+
               const editBtn = document.createElement("button");
               editBtn.className = "bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg shadow-lg";
               editBtn.title = "Editar";
               editBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`;
               editBtn.onclick = e => { e.stopPropagation(); UIModule.openEditModal(movie); };
+
               const deleteBtn = document.createElement("button");
               deleteBtn.className = "bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow-lg";
               deleteBtn.title = "Eliminar";
               deleteBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
               deleteBtn.onclick = e => { e.stopPropagation(); CatalogModule.deleteMovie(movie.id); };
+
               btnContainer.appendChild(editBtn);
               btnContainer.appendChild(deleteBtn);
               card.appendChild(btnContainer);
             }
+
             grid.appendChild(card);
           });
         },
@@ -572,6 +707,10 @@
             director_o_anio: formData.director_o_anio, resena: formData.resena,
             link_url: formData.link_url, clave: formData.clave, foto_url: fotoUrl,
           };
+          if (!isEdit && state.currentUser) {
+            // Guarda el email de quien sube la película
+            payload.subido_por = state.currentUser.email;
+          }
           if (isEdit) {
             const { error } = await supabase.from(CONFIG.table).update(payload).eq("id", formData.id);
             if (error) throw error;
@@ -604,6 +743,7 @@
         },
       };
 
+      // ─── UI ───
       const UIModule = {
         showModal(modalId) {
           const modal = $(modalId);
@@ -612,6 +752,10 @@
         hideModal(modalId) {
           const modal = $(modalId);
           if (modal) { modal.classList.add("hidden"); document.body.classList.remove("overflow-hidden"); }
+        },
+        openCreateFlow() {
+          // Muestra las reglas primero
+          this.showModal("modal-rules");
         },
         openEditModal(movie) {
           state.editingMovie = movie;
@@ -627,11 +771,13 @@
         showDetails(movie) {
           const content = $("details-content");
           if (!content) return;
+          const username = movie.subido_por ? emailToUsername(movie.subido_por) : null;
           content.innerHTML = `
             <div class="flex flex-col items-center space-y-3 pt-8">
               <img src="${movie.foto_url}" class="w-48 h-72 object-cover rounded-lg shadow-md"/>
               <h2 class="text-xl sm:text-2xl font-bold text-center text-accent-blue">${movie.titulo}</h2>
               <p class="text-sm text-gray-400">📁 ${movie.categoria} • 🎬 ${movie.director_o_anio}</p>
+              ${username ? `<p class="text-xs text-cyan-500">👤 Aporte de: <span class="font-semibold">${username}</span></p>` : ""}
               <p class="text-sm text-gray-300 text-justify px-4">${movie.resena}</p>
               ${movie.clave ? `
                 <div class="bg-yellow-900/30 border border-yellow-600 rounded-lg p-3 w-full max-w-sm">
@@ -659,12 +805,35 @@
       window.UIModule = UIModule;
       window.CatalogModule = CatalogModule;
 
+      // ─── Botones de descarga ───
       document.querySelectorAll(".download-btn").forEach(btn => {
         btn.addEventListener("click", async (e) => {
           e.stopPropagation();
           if (!navigator.onLine) { showToast("❌ Necesitas internet para guardar offline.", true); return; }
           await downloadCategory(btn, btn.dataset.cacheCategory);
         });
+      });
+
+      // ─── Modal reglas ───
+      $("rules-cancel-btn").addEventListener("click", () => UIModule.hideModal("modal-rules"));
+      $("rules-accept-btn").addEventListener("click", () => {
+        UIModule.hideModal("modal-rules");
+        // Después de aceptar las reglas, abre el formulario
+        state.editingMovie = null;
+        $("modal-title").textContent = "CREAR NUEVA REFERENCIA";
+        $("movie-form").reset();
+        $("movie-id").value = "";
+        $("poster-preview").src = "https://placehold.co/80x112/334155/E2E8F0?text=+";
+        $("poster-note").textContent = "";
+        $("poster_file").setAttribute("required", "required");
+        UIModule.showModal("modal-create");
+      });
+
+      // ─── Botón Subir película → muestra reglas primero ───
+      $("create-btn").addEventListener("click", () => {
+        $("sidebar").classList.remove("active");
+        $("sidebar-overlay").classList.remove("active");
+        UIModule.openCreateFlow();
       });
 
       $("menu-toggle").addEventListener("click", e => {
@@ -681,16 +850,6 @@
         AuthModule.loginWithGoogle();
       });
       $("logout-btn").addEventListener("click", () => AuthModule.logout());
-      $("create-btn").addEventListener("click", () => {
-        state.editingMovie = null;
-        $("modal-title").textContent = "CREAR NUEVA REFERENCIA";
-        $("movie-form").reset();
-        $("movie-id").value = "";
-        $("poster-preview").src = "https://placehold.co/80x112/334155/E2E8F0?text=+";
-        $("poster-note").textContent = "";
-        $("poster_file").setAttribute("required", "required");
-        UIModule.showModal("modal-create");
-      });
       $("cancel-create-btn").addEventListener("click", () => UIModule.hideModal("modal-create"));
       $("close-details-btn").addEventListener("click", () => UIModule.hideModal("modal-details"));
 
