@@ -27,99 +27,77 @@
         width: 100%;
         height: 240px;
       }
-      .custom-scroll::-webkit-scrollbar {
-        width: 8px;
-      }
-      .custom-scroll::-webkit-scrollbar-thumb {
-        background: #38bdf8;
-        border-radius: 4px;
-      }
+      .custom-scroll::-webkit-scrollbar { width: 8px; }
+      .custom-scroll::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
       .view {
         display: none !important;
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
         overflow: auto;
         z-index: 100;
         background-color: #0f172a;
       }
-      .view.active {
-        display: flex !important;
-      }
-      .genre-link.active {
-        background-color: #38bdf8;
-        color: #000;
-        font-weight: 600;
-      }
+      .view.active { display: flex !important; }
+      .genre-link.active { background-color: #38bdf8; color: #000; font-weight: 600; }
       .sidebar-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0,0,0,0.5);
         z-index: 15;
       }
-      .sidebar-overlay.active {
-        display: block;
-      }
-      #sidebar.active {
-        transform: translateX(0);
-      }
+      .sidebar-overlay.active { display: block; }
+      #sidebar.active { transform: translateX(0); }
 
       @keyframes bounce-horizontal {
         0%, 100% { transform: translateX(0); }
         50% { transform: translateX(-5px); }
       }
-      .animate-bounce-horizontal {
-        animation: bounce-horizontal 1.5s infinite;
-      }
+      .animate-bounce-horizontal { animation: bounce-horizontal 1.5s infinite; }
 
       @keyframes pulse-dot {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
       }
-      .pulse-dot {
-        animation: pulse-dot 2s ease-in-out infinite;
-      }
+      .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
 
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      .spin {
-        animation: spin 0.8s linear infinite;
-      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .spin { animation: spin 0.8s linear infinite; }
 
       .download-btn {
         flex-shrink: 0;
-        width: 22px;
-        height: 22px;
+        min-width: 28px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 5px;
+        border-radius: 6px;
+        background-color: #16a34a22;
+        border: 1px solid #16a34a55;
         transition: all 0.2s;
-        opacity: 0.7;
+        cursor: pointer;
       }
       .download-btn:hover {
-        opacity: 1;
-        transform: scale(1.15);
+        background-color: #16a34a44;
+        border-color: #16a34a;
+        transform: scale(1.1);
       }
       .download-btn.cached {
-        background-color: #16a34a22;
+        background-color: #16a34a33;
+        border-color: #16a34a88;
       }
     </style>
   </head>
   <body class="bg-secondary-dark text-white font-sans min-h-screen">
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
-    
+
     <!-- LOGIN -->
     <div id="view-login" class="view active items-center justify-center px-4">
       <div class="p-6 sm:p-8 bg-primary-dark rounded-xl w-full max-w-sm shadow-2xl flex flex-col items-center">
         <img src="logotipo.png" alt="AXO Movies" class="w-64 sm:w-72 h-auto mx-auto mb-2 drop-shadow-xl"/>
-        <h2 class="text-sm sm:text-base font-bold text-accent-blue text-center mb-8">
-          🎬 MOVIES ONLINE FREE 🎬
-        </h2>
+        <h2 class="text-sm sm:text-base font-bold text-accent-blue text-center mb-8">🎬 MOVIES ONLINE FREE 🎬</h2>
         <button type="button" id="google-login-btn"
           class="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 font-extrabold text-base sm:text-lg rounded-lg shadow-lg hover:from-yellow-300 hover:to-yellow-500 hover:shadow-xl transition-all flex items-center justify-center space-x-2 mb-4">
           <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 48 48">
@@ -144,8 +122,9 @@
         </svg>
       </button>
 
+      <!-- SIDEBAR w-64 -->
       <aside id="sidebar"
-        class="fixed inset-y-0 left-0 w-52 bg-secondary-dark border-r border-gray-700 p-4 custom-scroll overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+        class="fixed inset-y-0 left-0 w-64 bg-secondary-dark border-r border-gray-700 p-4 custom-scroll overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
         <div class="flex items-center justify-end mb-6">
           <div class="flex items-center space-x-2">
             <span class="relative flex h-3 w-3">
@@ -155,6 +134,7 @@
             <h2 id="connection-status-text" class="text-xs font-bold text-accent-blue">Online</h2>
           </div>
         </div>
+
         <nav class="space-y-6">
           <button id="create-btn"
             class="w-full flex items-center justify-center space-x-2 p-3 text-sm font-medium text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg hover:from-yellow-300 hover:to-yellow-500 transition">
@@ -164,110 +144,84 @@
             <span>Subir película</span>
           </button>
 
-          <div class="space-y-3">
+          <div class="space-y-1">
             <div class="flex items-center justify-between mb-3">
               <p class="text-xs uppercase tracking-wider text-gray-400">Géneros</p>
-              <span class="text-[10px] text-green-400 opacity-70">⬇ = guardar offline</span>
+              <span class="text-[10px] text-green-400 opacity-70">⬇ offline</span>
             </div>
-            <nav class="space-y-1">
 
-              <!-- TODOS -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="" class="genre-link active flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  🎬 Todos
-                </a>
-                <button class="download-btn" data-cache-category="" title="Guardar todos offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- TODOS -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="" class="genre-link active flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🎬 Todos</a>
+              <button class="download-btn" data-cache-category="" title="Guardar todos offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- ACCIÓN -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Acción" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  💥 Acción
-                </a>
-                <button class="download-btn" data-cache-category="Acción" title="Guardar Acción offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- ACCIÓN -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Acción" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">💥 Acción</a>
+              <button class="download-btn" data-cache-category="Acción" title="Guardar Acción offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- INFANTILES -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Infantiles" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  🎌 Infantiles
-                </a>
-                <button class="download-btn" data-cache-category="Infantiles" title="Guardar Infantiles offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- INFANTILES -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Infantiles" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🎌 Infantiles</a>
+              <button class="download-btn" data-cache-category="Infantiles" title="Guardar Infantiles offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- COMEDIA -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Comedia" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  😂 Comedia
-                </a>
-                <button class="download-btn" data-cache-category="Comedia" title="Guardar Comedia offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- COMEDIA -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Comedia" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">😂 Comedia</a>
+              <button class="download-btn" data-cache-category="Comedia" title="Guardar Comedia offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- TERROR -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Terror" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  👻 Terror
-                </a>
-                <button class="download-btn" data-cache-category="Terror" title="Guardar Terror offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- TERROR -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Terror" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">👻 Terror</a>
+              <button class="download-btn" data-cache-category="Terror" title="Guardar Terror offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- DRAMA -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Drama" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  🎭 Drama
-                </a>
-                <button class="download-btn" data-cache-category="Drama" title="Guardar Drama offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- DRAMA -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Drama" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🎭 Drama</a>
+              <button class="download-btn" data-cache-category="Drama" title="Guardar Drama offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- CIENCIA FICCIÓN -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Ciencia Ficción" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  🚀 Ciencia Ficción
-                </a>
-                <button class="download-btn" data-cache-category="Ciencia Ficción" title="Guardar Ciencia Ficción offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- FICCIÓN (data-category sigue siendo "Ciencia Ficción" para no romper los datos en Supabase) -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Ciencia Ficción" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🚀 Ficción</a>
+              <button class="download-btn" data-cache-category="Ciencia Ficción" title="Guardar Ficción offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-              <!-- SUPERHEROES -->
-              <div class="flex items-center gap-1">
-                <a href="#" data-category="Superheroes" class="genre-link flex-1 block px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition">
-                  🤖 Superheroes
-                </a>
-                <button class="download-btn" data-cache-category="Superheroes" title="Guardar Superheroes offline">
-                  <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                  </svg>
-                </button>
-              </div>
+            <!-- SUPERHEROES -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Superheroes" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">🤖 Superheroes</a>
+              <button class="download-btn" data-cache-category="Superheroes" title="Guardar Superheroes offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
 
-            </nav>
+            <!-- CURSOS -->
+            <div class="flex items-center gap-2">
+              <a href="#" data-category="Cursos" class="genre-link flex-1 px-3 py-2 text-sm rounded-md hover:bg-gray-700/50 transition truncate">📚 Cursos</a>
+              <button class="download-btn" data-cache-category="Cursos" title="Guardar Cursos offline">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </button>
+            </div>
+
           </div>
 
           <button id="logout-btn" class="w-full p-2 text-lg text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-md transition">
@@ -283,7 +237,8 @@
         </nav>
       </aside>
 
-      <main class="md:ml-64 p-4 md:p-6">
+      <!-- ml-72 para coincidir con w-64 del sidebar -->
+      <main class="md:ml-72 p-4 md:p-6">
         <header class="h-16 flex items-center justify-center border-b border-gray-700/50 mb-6 sticky top-0 bg-secondary-dark z-10 w-full">
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
             CATÁLOGO PELICULAS
@@ -331,6 +286,7 @@
               <option value="Drama">Drama</option>
               <option value="Terror">Terror</option>
               <option value="Thriller">Thriller</option>
+              <option value="Cursos">Cursos</option>
             </select>
           </div>
           <div>
@@ -397,21 +353,13 @@
       const $ = (id) => document.getElementById(id);
 
       const state = {
-        movies: [],
-        filteredMovies: [],
-        currentUser: null,
-        isAdmin: false,
-        editingMovie: null,
-        isOffline: false,
+        movies: [], filteredMovies: [],
+        currentUser: null, isAdmin: false,
+        editingMovie: null, isOffline: false,
       };
 
-      // ─────────────────────────────────────────
-      // CACHE HELPERS — guarda/lee de localStorage
-      // ─────────────────────────────────────────
       const Cache = {
-        key(category) {
-          return "axo_cache_" + (category === "" ? "todos" : category);
-        },
+        key(category) { return "axo_cache_" + (category === "" ? "todos" : category); },
         save(category, data) {
           try {
             localStorage.setItem(this.key(category), JSON.stringify(data));
@@ -424,65 +372,40 @@
             return raw ? JSON.parse(raw) : null;
           } catch(e) { return null; }
         },
-        exists(category) {
-          return !!localStorage.getItem(this.key(category));
-        },
+        exists(category) { return !!localStorage.getItem(this.key(category)); },
       };
 
-      // ─────────────────────────────────────────
-      // Actualiza íconos de los botones de descarga
-      // ─────────────────────────────────────────
       function updateDownloadIcons() {
         document.querySelectorAll(".download-btn").forEach(btn => {
           const cat = btn.dataset.cacheCategory;
           if (Cache.exists(cat)) {
             btn.classList.add("cached");
-            btn.title = "✅ Ya guardado offline (click para actualizar)";
-            btn.innerHTML = `
-              <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-              </svg>`;
+            btn.title = "✅ Ya guardado (click para actualizar)";
+            btn.innerHTML = `<svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
           } else {
             btn.classList.remove("cached");
             btn.title = "Guardar offline";
-            btn.innerHTML = `
-              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-              </svg>`;
+            btn.innerHTML = `<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>`;
           }
         });
       }
 
-      // ─────────────────────────────────────────
-      // Descarga y guarda una categoría
-      // ─────────────────────────────────────────
       async function downloadCategory(btn, category) {
-        // Muestra spinner
-        btn.innerHTML = `<svg class="w-4 h-4 text-yellow-300 spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-        </svg>`;
-
+        btn.innerHTML = `<svg class="w-4 h-4 text-yellow-300 spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>`;
         try {
           let query = supabase.from(CONFIG.table).select("*").order("fecha_creacion", { ascending: false });
           if (category !== "") query = query.eq("categoria", category);
-
           const { data, error } = await query;
           if (error) throw error;
-
           Cache.save(category, data);
           updateDownloadIcons();
-
-          // Toast de confirmación
-          showToast(`✅ ${category === "" ? "Todo el catálogo" : category} guardado offline (${data.length} películas)`);
+          showToast(`✅ ${category === "" ? "Todo el catálogo" : category} guardado offline (${data.length} elementos)`);
         } catch(e) {
           showToast("❌ Error al guardar. Verifica tu conexión.", true);
           updateDownloadIcons();
         }
       }
 
-      // ─────────────────────────────────────────
-      // Toast pequeño de notificación
-      // ─────────────────────────────────────────
       function showToast(msg, isError = false) {
         let toast = document.getElementById("axo-toast");
         if (!toast) {
@@ -506,10 +429,7 @@
           $(viewId).classList.add("active");
         },
         toLogin() { this.showView("view-login"); },
-        toDashboard() {
-          this.showView("view-dashboard");
-          CatalogModule.loadCatalog();
-        },
+        toDashboard() { this.showView("view-dashboard"); CatalogModule.loadCatalog(); },
       };
 
       const AuthModule = {
@@ -533,23 +453,14 @@
               state.isAdmin = data.session.user.email === CONFIG.adminEmail;
               Router.toDashboard();
             } else {
-              // Sin internet y sin sesión: intenta cargar igual si hay caché
               const cached = Cache.load("");
-              if (!navigator.onLine && cached) {
-                state.isOffline = true;
-                Router.toDashboard();
-              } else {
-                Router.toLogin();
-              }
+              if (!navigator.onLine && cached) { state.isOffline = true; Router.toDashboard(); }
+              else Router.toLogin();
             }
           } catch(e) {
             const cached = Cache.load("");
-            if (cached) {
-              state.isOffline = true;
-              Router.toDashboard();
-            } else {
-              Router.toLogin();
-            }
+            if (cached) { state.isOffline = true; Router.toDashboard(); }
+            else Router.toLogin();
           }
         },
       };
@@ -561,44 +472,31 @@
           $("offline-banner").classList.add("hidden");
 
           if (navigator.onLine) {
-            // ── CON INTERNET ──
             try {
-              let query = supabase.from(CONFIG.table).select("*").order("fecha_creacion", { ascending: false });
-              const { data, error } = await query;
+              const { data, error } = await supabase.from(CONFIG.table).select("*").order("fecha_creacion", { ascending: false });
               if (error) throw error;
-
-              // Guarda automáticamente "todos" en caché
               Cache.save("", data);
               updateDownloadIcons();
-
               $("loading-message").classList.add("hidden");
               state.movies = data || [];
               state.filteredMovies = state.movies;
               this.renderMovies();
-            } catch(e) {
-              this.loadFromCache(category);
-            }
+            } catch(e) { this.loadFromCache(category); }
           } else {
-            // ── SIN INTERNET ──
             this.loadFromCache(category);
           }
         },
 
         loadFromCache(category = "") {
-          // Intenta caché de la categoría específica, si no existe prueba con "todos"
           let cached = Cache.load(category !== "" ? category : "");
           if (!cached && category !== "") cached = Cache.load("");
-
           if (cached) {
             $("loading-message").classList.add("hidden");
             $("offline-banner").classList.remove("hidden");
             $("connection-status-text").textContent = "Offline";
             $("connection-status-text").classList.replace("text-accent-blue", "text-yellow-400");
-
             let movies = cached;
-            if (category !== "") {
-              movies = cached.filter(m => m.categoria === category);
-            }
+            if (category !== "") movies = cached.filter(m => m.categoria === category);
             state.movies = movies;
             state.filteredMovies = movies;
             this.renderMovies();
@@ -608,7 +506,7 @@
               <div class="col-span-full text-center py-10 text-gray-400">
                 <p class="text-4xl mb-3">📴</p>
                 <p class="font-semibold mb-1">Sin conexión</p>
-                <p class="text-sm text-gray-500">Primero entra con internet y presiona ⬇ junto a un género para guardarlo offline.</p>
+                <p class="text-sm text-gray-500">Entra con internet y presiona ⬇ junto a un género para guardarlo offline.</p>
               </div>`;
           }
         },
@@ -616,19 +514,15 @@
         renderMovies() {
           const grid = $("catalog-grid");
           grid.innerHTML = "";
-
           if (state.filteredMovies.length === 0) {
             grid.innerHTML = '<p class="col-span-full w-full text-center text-gray-400 py-10">No hay películas en esta categoría</p>';
             $("movie-count").textContent = 0;
             return;
           }
-
           $("movie-count").textContent = state.filteredMovies.length;
-
           state.filteredMovies.forEach(movie => {
             const card = document.createElement("div");
             card.className = "bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group";
-
             const contentDiv = document.createElement("div");
             contentDiv.className = "p-2 cursor-pointer";
             contentDiv.onclick = () => {
@@ -642,28 +536,23 @@
               <p class="text-xs text-gray-400 text-center">${movie.director_o_anio}</p>
             `;
             card.appendChild(contentDiv);
-
             if (state.isAdmin) {
               const btnContainer = document.createElement("div");
               btnContainer.className = "absolute top-2 left-2 right-2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10";
-
               const editBtn = document.createElement("button");
               editBtn.className = "bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg shadow-lg";
-              editBtn.title = "Editar película";
+              editBtn.title = "Editar";
               editBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`;
               editBtn.onclick = e => { e.stopPropagation(); UIModule.openEditModal(movie); };
-
               const deleteBtn = document.createElement("button");
               deleteBtn.className = "bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow-lg";
-              deleteBtn.title = "Eliminar película";
+              deleteBtn.title = "Eliminar";
               deleteBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
               deleteBtn.onclick = e => { e.stopPropagation(); CatalogModule.deleteMovie(movie.id); };
-
               btnContainer.appendChild(editBtn);
               btnContainer.appendChild(deleteBtn);
               card.appendChild(btnContainer);
             }
-
             grid.appendChild(card);
           });
         },
@@ -671,7 +560,6 @@
         async saveMovie(formData, isEdit = false) {
           const file = $("poster_file").files[0];
           let fotoUrl = formData.foto_url;
-
           if (file) {
             const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
             const { error: uploadError } = await supabase.storage.from("portadas").upload(fileName, file);
@@ -679,17 +567,11 @@
             const { data: urlData } = supabase.storage.from("portadas").getPublicUrl(fileName);
             fotoUrl = urlData.publicUrl;
           }
-
           const payload = {
-            titulo: formData.titulo,
-            categoria: formData.categoria,
-            director_o_anio: formData.director_o_anio,
-            resena: formData.resena,
-            link_url: formData.link_url,
-            clave: formData.clave,
-            foto_url: fotoUrl,
+            titulo: formData.titulo, categoria: formData.categoria,
+            director_o_anio: formData.director_o_anio, resena: formData.resena,
+            link_url: formData.link_url, clave: formData.clave, foto_url: fotoUrl,
           };
-
           if (isEdit) {
             const { error } = await supabase.from(CONFIG.table).update(payload).eq("id", formData.id);
             if (error) throw error;
@@ -698,17 +580,12 @@
             const { error } = await supabase.from(CONFIG.table).insert([payload]);
             if (error) throw error;
           }
-
           this.loadCatalog();
         },
 
         filterByCategory(category) {
           if (navigator.onLine) {
-            if (!category) {
-              state.filteredMovies = state.movies;
-            } else {
-              state.filteredMovies = state.movies.filter(m => m.categoria === category);
-            }
+            state.filteredMovies = !category ? state.movies : state.movies.filter(m => m.categoria === category);
             this.renderMovies();
           } else {
             this.loadFromCache(category);
@@ -717,15 +594,13 @@
 
         async deleteMovie(movieId) {
           if (!state.isAdmin) { alert("No tienes permisos"); return; }
-          if (!confirm("¿Estás seguro de eliminar esta película?")) return;
+          if (!confirm("¿Estás seguro de eliminar?")) return;
           try {
             const { error } = await supabase.from(CONFIG.table).delete().eq("id", movieId);
             if (error) throw error;
-            alert("✅ Película eliminada correctamente");
+            alert("✅ Eliminado correctamente");
             this.loadCatalog();
-          } catch(error) {
-            alert("❌ Error al eliminar: " + error.message);
-          }
+          } catch(error) { alert("❌ Error: " + error.message); }
         },
       };
 
@@ -741,14 +616,10 @@
         openEditModal(movie) {
           state.editingMovie = movie;
           $("modal-title").textContent = "EDITAR PELÍCULA";
-          $("movie-id").value = movie.id;
-          $("titulo").value = movie.titulo;
-          $("categoria").value = movie.categoria;
-          $("director_o_anio").value = movie.director_o_anio;
-          $("resena").value = movie.resena;
-          $("link_url").value = movie.link_url;
-          $("clave").value = movie.clave;
-          $("poster-preview").src = movie.foto_url;
+          $("movie-id").value = movie.id; $("titulo").value = movie.titulo;
+          $("categoria").value = movie.categoria; $("director_o_anio").value = movie.director_o_anio;
+          $("resena").value = movie.resena; $("link_url").value = movie.link_url;
+          $("clave").value = movie.clave; $("poster-preview").src = movie.foto_url;
           $("poster-note").textContent = "Deja vacío para mantener el póster actual";
           $("poster_file").removeAttribute("required");
           this.showModal("modal-create");
@@ -770,15 +641,15 @@
                   </div>
                 </div>` : ""}
               <div class="flex space-x-3 w-full max-w-sm pt-2">
-                <a href="${movie.link_url}" target="_blank" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-2 rounded-lg text-center hover:from-green-600 hover:to-emerald-700 transition font-semibold flex items-center justify-center space-x-2 text-sm">
+                <a href="${movie.link_url}" target="_blank"
+                  class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-2 rounded-lg text-center hover:from-green-600 hover:to-emerald-700 transition font-semibold flex items-center justify-center space-x-2 text-sm">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                   </svg>
                   <span>Descargar</span>
                 </a>
-                <button onclick="window.UIModule.hideModal('modal-details')" class="flex-1 bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-500 transition font-semibold text-sm">
-                  Cerrar
-                </button>
+                <button onclick="window.UIModule.hideModal('modal-details')"
+                  class="flex-1 bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-500 transition font-semibold text-sm">Cerrar</button>
               </div>
             </div>`;
           this.showModal("modal-details");
@@ -788,41 +659,28 @@
       window.UIModule = UIModule;
       window.CatalogModule = CatalogModule;
 
-      // ─── Botones de descarga por categoría ───
       document.querySelectorAll(".download-btn").forEach(btn => {
         btn.addEventListener("click", async (e) => {
           e.stopPropagation();
-          if (!navigator.onLine) {
-            showToast("❌ Necesitas internet para guardar offline.", true);
-            return;
-          }
-          const category = btn.dataset.cacheCategory;
-          await downloadCategory(btn, category);
+          if (!navigator.onLine) { showToast("❌ Necesitas internet para guardar offline.", true); return; }
+          await downloadCategory(btn, btn.dataset.cacheCategory);
         });
       });
 
-      // ─── Eventos generales ───
       $("menu-toggle").addEventListener("click", e => {
         e.stopPropagation();
         $("sidebar").classList.toggle("active");
         $("sidebar-overlay").classList.toggle("active");
       });
-
       $("sidebar-overlay").addEventListener("click", () => {
         $("sidebar").classList.remove("active");
         $("sidebar-overlay").classList.remove("active");
       });
-
       $("google-login-btn").addEventListener("click", () => {
-        if (!$("terms-check").checked) {
-          $("login-status").textContent = "Debes aceptar los términos y condiciones.";
-          return;
-        }
+        if (!$("terms-check").checked) { $("login-status").textContent = "Debes aceptar los términos y condiciones."; return; }
         AuthModule.loginWithGoogle();
       });
-
       $("logout-btn").addEventListener("click", () => AuthModule.logout());
-
       $("create-btn").addEventListener("click", () => {
         state.editingMovie = null;
         $("modal-title").textContent = "CREAR NUEVA REFERENCIA";
@@ -833,7 +691,6 @@
         $("poster_file").setAttribute("required", "required");
         UIModule.showModal("modal-create");
       });
-
       $("cancel-create-btn").addEventListener("click", () => UIModule.hideModal("modal-create"));
       $("close-details-btn").addEventListener("click", () => UIModule.hideModal("modal-details"));
 
@@ -845,23 +702,15 @@
         try {
           const isEdit = !!state.editingMovie;
           const formData = {
-            id: $("movie-id").value,
-            titulo: $("titulo").value,
-            categoria: $("categoria").value,
-            director_o_anio: $("director_o_anio").value,
-            resena: $("resena").value,
-            link_url: $("link_url").value,
-            clave: $("clave").value,
-            foto_url: state.editingMovie ? state.editingMovie.foto_url : "",
+            id: $("movie-id").value, titulo: $("titulo").value,
+            categoria: $("categoria").value, director_o_anio: $("director_o_anio").value,
+            resena: $("resena").value, link_url: $("link_url").value,
+            clave: $("clave").value, foto_url: state.editingMovie ? state.editingMovie.foto_url : "",
           };
           await CatalogModule.saveMovie(formData, isEdit);
           status.textContent = isEdit ? "✅ ¡Actualizado!" : "✅ ¡Guardado!";
           status.className = "text-sm text-center text-green-400";
-          setTimeout(() => {
-            UIModule.hideModal("modal-create");
-            status.textContent = "";
-            status.className = "text-sm text-center";
-          }, 1000);
+          setTimeout(() => { UIModule.hideModal("modal-create"); status.textContent = ""; }, 1000);
         } catch(error) {
           status.textContent = "❌ " + error.message;
           status.className = "text-sm text-center text-red-400";
@@ -883,8 +732,7 @@
           e.currentTarget.classList.add("active");
           $("sidebar").classList.remove("active");
           $("sidebar-overlay").classList.remove("active");
-          const category = e.currentTarget.dataset.category;
-          CatalogModule.filterByCategory(category);
+          CatalogModule.filterByCategory(e.currentTarget.dataset.category);
         });
       });
 
@@ -902,7 +750,6 @@
       AuthModule.checkSession();
       updateDownloadIcons();
 
-      // Swipe para cerrar sidebar
       let touchStartX = 0;
       const sidebar = $("sidebar");
       sidebar.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
