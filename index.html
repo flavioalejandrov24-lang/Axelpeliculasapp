@@ -760,6 +760,20 @@
           $("sidebar-overlay").classList.remove("active");
         }
       }, false);
+
+
+</script>
+
+    <!-- ✅ SERVICE WORKER - Modo Offline -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./service-worker.js')
+            .then(() => console.log('✅ Modo offline activado'))
+            .catch(err => console.warn('SW no disponible:', err));
+        });
+      }
+   
     </script>
   </body>
 </html>
