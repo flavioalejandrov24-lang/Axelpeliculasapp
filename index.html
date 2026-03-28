@@ -823,7 +823,7 @@
             categoria: formData.categoria,
             director_o_anio: formData.director_o_anio,
             resena: formData.resena,
-            link_url: formData.link_url,
+            link_url: formData.link_url || null,
             local_url: formData.local_url || null,   // ✅ NUEVO CAMPO
             clave: formData.clave,
             foto_url: fotoUrl,
@@ -894,7 +894,7 @@
             anioSelect.value = movie.director_o_anio;
           }
           $("resena").value = movie.resena;
-          $("link_url").value = movie.link_url;
+          $("link_url").value = movie.link_url || "";
           $("local_url").value = movie.local_url || "";   // ✅ NUEVO CAMPO
           $("clave").value = movie.clave;
           $("poster-preview").src = movie.foto_url;
@@ -1058,7 +1058,7 @@
             categoria: $("categoria").value,
             director_o_anio: $("director_o_anio").value,
             resena: $("resena").value,
-            link_url: $("link_url").value,
+            link_url: $("link_url").value.trim() || null,
             local_url: $("local_url").value || null,   // ✅ NUEVO CAMPO
             clave: $("clave").value,
             foto_url: state.editingMovie ? state.editingMovie.foto_url : "",
