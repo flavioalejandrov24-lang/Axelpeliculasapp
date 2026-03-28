@@ -1102,7 +1102,7 @@
                   <span>Descargar</span>
                 </a>
 
-                <!-- ✅ CAMBIO 4: Botón Local — intent corregido para VLC directo con la ruta del archivo -->
+                <!-- Botón Local -->
                 <button class="detail-btn detail-btn-local" id="btn-local-open">
                   <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
@@ -1110,7 +1110,7 @@
                   <span>Local</span>
                 </button>
 
-                <!-- Botón VLC: lanza VLC directamente con la ruta del archivo -->
+                <!-- Botón VLC -->
                 <button class="detail-btn" id="btn-vlc-open"
                   style="background:linear-gradient(135deg,#ff6600,#e05500);color:#fff;font-weight:800;">
                   <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="#fff">
@@ -1122,55 +1122,153 @@
               </div>
             </div>`;
 
-          // ─── Botón Local: abre selector "Abrir con..." del sistema ───
+          // ─── Helper: construye y muestra el modal de diagnóstico antes de lanzar ───
+          // Muestra la URL RAW guardada en Supabase y la URL final construida para el intent
+          function launchWithDiagnostic(rawStoredUrl, builtIntentUrl, onConfirm) {
+            // Eliminar modal previo si existe
+            const prev = document.getElementById("modal-diag");
+            if (prev) prev.remove();
+
+            const overlay = document.createElement("div");
+            overlay.id = "modal-diag";
+            overlay.style.cssText = [
+              "position:fixed", "inset:0", "background:rgba(0,0,0,0.85)",
+              "z-index:999999", "display:flex", "align-items:center",
+              "justify-content:center", "padding:16px"
+            ].join(";");
+
+            overlay.innerHTML = `
+              <div style="background:#1e293b;border-radius:16px;width:100%;max-width:360px;
+                          overflow:hidden;border:1px solid #f59e0b88;box-shadow:0 0 32px #f59e0b33;">
+
+                <!-- Header -->
+                <div style="background:linear-gradient(135deg,#d97706,#b45309);
+                            padding:14px 18px;display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:1.4rem;">🎬</span>
+                  <div>
+                    <p style="color:#fff;font-weight:800;font-size:0.9rem;margin:0;">
+                      Estás a punto de abrir en VLC
+                    </p>
+                    <p style="color:#fde68a;font-size:0.68rem;margin:0;">
+                      Verifica la URL antes de continuar
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Cuerpo -->
+                <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+
+                  <!-- URL guardada en Supabase (raw) -->
+                  <div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px;">
+                    <p style="color:#94a3b8;font-size:0.65rem;text-transform:uppercase;
+                               letter-spacing:.05em;margin:0 0 4px 0;">
+                      📦 URL guardada en Supabase (local_url):
+                    </p>
+                    <p id="diag-raw" style="color:#e2e8f0;font-size:0.72rem;word-break:break-all;
+                               font-family:monospace;margin:0;line-height:1.5;">
+                      ${rawStoredUrl || '<span style="color:#f87171;">— vacío / no registrado —</span>'}
+                    </p>
+                  </div>
+
+                  <!-- URL final construida para el intent -->
+                  <div style="background:#0f172a;border:1px solid #1d4ed8;border-radius:10px;padding:10px;">
+                    <p style="color:#93c5fd;font-size:0.65rem;text-transform:uppercase;
+                               letter-spacing:.05em;margin:0 0 4px 0;">
+                      🚀 Intent URL que se enviará a Android:
+                    </p>
+                    <p id="diag-intent" style="color:#bfdbfe;font-size:0.72rem;word-break:break-all;
+                               font-family:monospace;margin:0;line-height:1.5;">
+                      ${builtIntentUrl}
+                    </p>
+                  </div>
+
+                  <!-- Aviso -->
+                  <p style="color:#6b7280;font-size:0.65rem;text-align:center;margin:0;">
+                    Si la URL se ve correcta, presiona <strong style="color:#fbbf24;">OK</strong>
+                    para abrir el selector de apps de Android.
+                  </p>
+                </div>
+
+                <!-- Botones -->
+                <div style="padding:0 16px 16px;display:flex;gap:10px;">
+                  <button id="diag-cancel"
+                    style="flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;
+                           font-weight:700;font-size:0.8rem;
+                           background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;">
+                    Cancelar
+                  </button>
+                  <button id="diag-ok"
+                    style="flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;
+                           font-weight:800;font-size:0.85rem;
+                           background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a1a;">
+                    ▶ OK, Abrir
+                  </button>
+                </div>
+              </div>`;
+
+            document.body.appendChild(overlay);
+
+            document.getElementById("diag-cancel").addEventListener("click", () => overlay.remove());
+            document.getElementById("diag-ok").addEventListener("click", () => {
+              overlay.remove();
+              onConfirm();
+            });
+          }
+
+          // ─── Botón Local: muestra diagnóstico → abre selector "Abrir con..." del sistema ───
           const btnLocal = document.getElementById("btn-local-open");
           if (btnLocal) {
             btnLocal.addEventListener("click", () => {
-              const localPath = movie.local_url;
-              if (!localPath || localPath.trim() === "") {
+              const rawStored = movie.local_url;
+              if (!rawStored || rawStored.trim() === "") {
                 $("modal-no-local").classList.add("active");
                 return;
               }
-              const cleanPath = localPath.trim().replace(/^\//, "");
+              // Limpiar slashes dobles y espacios, asegurar ruta absoluta
+              const cleanPath = rawStored.trim()
+                .replace(/\\/g, "/")          // backslashes → forward slashes
+                .replace(/\/+/g, "/")         // múltiples slashes → uno solo
+                .replace(/^\//, "");          // quitar slash inicial para el intent://
+
               const intentUrl = "intent://" + cleanPath +
                 "#Intent;" +
                 "action=android.intent.action.VIEW;" +
                 "type=video/*;" +
                 "S.browser_fallback_url=https://play.google.com/store/apps/details?id=org.videolan.vlc;" +
                 "end";
-              window.location.href = intentUrl;
+
+              launchWithDiagnostic(rawStored, intentUrl, () => {
+                window.location.href = intentUrl;
+              });
             });
           }
 
-          // ─── ✅ CAMBIO 4: Botón VLC — ahora abre VLC directamente con el archivo ───
-          // Problema anterior: el intent solo abría VLC en pantalla principal sin el video.
-          // Causa del error "no abre": al elegir "abrir siempre con VLC" en el botón LOCAL,
-          // Android asocia ese intent (action=VIEW type=video/*) exclusivamente a VLC,
-          // pero si VLC no reconoce la ruta como un content:// URI válido, falla silenciosamente.
-          // Solución: el botón VLC ahora construye el intent con la ruta real del archivo
-          // usando el esquema "file://" + package de VLC para forzar apertura directa.
+          // ─── Botón VLC: muestra diagnóstico → lanza VLC directamente con el archivo ───
           const btnVlc = document.getElementById("btn-vlc-open");
           if (btnVlc) {
             btnVlc.addEventListener("click", () => {
-              const localPath = movie.local_url;
-              if (!localPath || localPath.trim() === "") {
+              const rawStored = movie.local_url;
+              if (!rawStored || rawStored.trim() === "") {
                 $("modal-no-local").classList.add("active");
                 return;
               }
-              // Construir ruta absoluta con file://
-              const filePath = localPath.trim().startsWith("/")
-                ? localPath.trim()
-                : "/" + localPath.trim();
+              // Misma limpieza de ruta
+              const cleanPath = rawStored.trim()
+                .replace(/\\/g, "/")
+                .replace(/\/+/g, "/")
+                .replace(/^\//, "");
 
-              // Intent que fuerza VLC con el archivo específico
-              const intentUrl = "intent://" + filePath.replace(/^\//, "") +
+              const intentUrl = "intent://" + cleanPath +
                 "#Intent;" +
                 "action=android.intent.action.VIEW;" +
                 "type=video/*;" +
                 "package=org.videolan.vlc;" +
                 "S.browser_fallback_url=https://play.google.com/store/apps/details?id=org.videolan.vlc;" +
                 "end";
-              window.location.href = intentUrl;
+
+              launchWithDiagnostic(rawStored, intentUrl, () => {
+                window.location.href = intentUrl;
+              });
             });
           }
 
