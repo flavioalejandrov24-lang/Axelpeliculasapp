@@ -981,10 +981,18 @@
                   <span>Descargar</span>
                 </a>
 
+                <!-- Local: abre selector "Abrir con..." de Android -->
+                <button class="detail-btn detail-btn-local" id="btn-local-open">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+                  </svg>
+                  <span>Local</span>
+                </button>
+
                 <!-- VLC: acceso directo a la app VLC de Android -->
                 <button class="detail-btn" id="btn-vlc-open"
-                  style="background:#ffffff;color:#ff6600;border:2px solid #ff6600;font-weight:800;">
-                  <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="#ff6600">
+                  style="background:linear-gradient(135deg,#ff6600,#e05500);color:#fff;font-weight:800;">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="#fff">
                     <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z"/>
                   </svg>
                   <span>VLC</span>
@@ -992,6 +1000,27 @@
 
               </div>
             </div>`;
+
+          // Botón Local: Intent Android → abre selector "Abrir con..." del sistema
+          const btnLocal = document.getElementById("btn-local-open");
+          if (btnLocal) {
+            btnLocal.addEventListener("click", () => {
+              const localPath = movie.local_url;
+              if (!localPath || localPath.trim() === "") {
+                $("modal-no-local").classList.add("active");
+                return;
+              }
+              // Intent URI → dispara el diálogo nativo "Abrir con..." de Android
+              const cleanPath = localPath.trim().replace(/^\//, "");
+              const intentUrl = "intent://" + cleanPath +
+                "#Intent;" +
+                "action=android.intent.action.VIEW;" +
+                "type=video/*;" +
+                "S.browser_fallback_url=https://play.google.com/store/apps/details?id=org.videolan.vlc;" +
+                "end";
+              window.location.href = intentUrl;
+            });
+          }
 
           // Botón VLC: lanza la app VLC directamente como acceso directo
           const btnVlc = document.getElementById("btn-vlc-open");
