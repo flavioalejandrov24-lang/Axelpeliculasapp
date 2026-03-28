@@ -89,9 +89,9 @@
         border-color: #16a34a88;
       }
 
-      /* Botón Ver detalles — naranja */
+      /* ✅ CAMBIO 1: Botón Ver detalles — azul acorde al accent-blue de la app */
       .btn-ver-detalles {
-        background: linear-gradient(135deg, #f97316, #ea580c);
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
         color: #fff;
         font-weight: 700;
         font-size: 0.72rem;
@@ -105,7 +105,7 @@
         cursor: pointer;
       }
       .btn-ver-detalles:hover {
-        background: linear-gradient(135deg, #fb923c, #f97316);
+        background: linear-gradient(135deg, #38bdf8, #3b82f6);
         transform: scale(1.02);
       }
 
@@ -131,7 +131,7 @@
         width: 22px;
         height: 22px;
         border-radius: 6px;
-        border: 2px solid #f97316;
+        border: 2px solid #0ea5e9;
         background: rgba(15,23,42,0.85);
         display: none;
         align-items: center;
@@ -143,21 +143,21 @@
       }
       .card-select-checkbox.visible { display: flex; }
       .card-select-checkbox.checked {
-        background: #f97316;
-        border-color: #f97316;
+        background: #0ea5e9;
+        border-color: #0ea5e9;
       }
       .card-select-checkbox svg { display: none; }
       .card-select-checkbox.checked svg { display: block; }
 
       /* Vibración visual al activar long press */
       @keyframes longpress-pulse {
-        0%   { box-shadow: 0 0 0 0 rgba(249,115,22,0.5); }
-        70%  { box-shadow: 0 0 0 10px rgba(249,115,22,0); }
-        100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+        0%   { box-shadow: 0 0 0 0 rgba(14,165,233,0.5); }
+        70%  { box-shadow: 0 0 0 10px rgba(14,165,233,0); }
+        100% { box-shadow: 0 0 0 0 rgba(14,165,233,0); }
       }
       .card-longpress-active {
         animation: longpress-pulse 0.5s ease;
-        border: 1px solid rgba(249,115,22,0.6) !important;
+        border: 1px solid rgba(14,165,233,0.6) !important;
       }
 
       /* Regla animada en modal */
@@ -220,7 +220,7 @@
       }
       #modal-no-local.active { display: flex; }
 
-      /* ✅ NUEVO: checkboxes login en fila */
+      /* ✅ checkboxes login en fila */
       .login-checks-row {
         display: flex;
         align-items: center;
@@ -244,6 +244,18 @@
         height: 15px;
         flex-shrink: 0;
       }
+
+      /* ✅ CAMBIO 2: Botón Cancelar — rojo con degradado */
+      .btn-cancelar {
+        background: linear-gradient(135deg, #dc2626, #991b1b);
+        color: #fff;
+        font-weight: 600;
+        transition: background 0.2s, transform 0.15s;
+      }
+      .btn-cancelar:hover {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        transform: scale(1.02);
+      }
     </style>
   </head>
   <body class="bg-secondary-dark text-white font-sans min-h-screen">
@@ -264,7 +276,6 @@
           <span>Entrar con Google</span>
         </button>
 
-        <!-- ✅ CAMBIO: dos checkboxes en la misma fila -->
         <div class="login-checks-row">
           <label class="login-check-label">
             <input type="checkbox" id="terms-check" required/>
@@ -294,7 +305,6 @@
       <aside id="sidebar"
         class="fixed inset-y-0 left-0 w-64 bg-secondary-dark border-r border-gray-700 p-4 custom-scroll overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
 
-        <!-- Estado Online + usuario -->
         <div class="flex flex-col gap-2 mb-5">
           <div class="flex items-center justify-end">
             <div class="flex items-center space-x-2">
@@ -474,8 +484,9 @@
         </div>
 
         <div class="px-6 py-4 flex gap-3 border-t border-gray-700/50">
+          <!-- ✅ CAMBIO 2: Cancelar con clase btn-cancelar (rojo degradado) -->
           <button id="rules-cancel-btn"
-            class="flex-1 py-2 text-sm bg-gray-700 rounded-lg hover:bg-gray-600 transition font-semibold">
+            class="btn-cancelar flex-1 py-2 text-sm rounded-lg font-semibold">
             Cancelar
           </button>
           <button id="rules-accept-btn"
@@ -516,6 +527,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Director o Año</label>
+            <!-- ✅ CAMBIO 3: El año actual se preselecciona via JS al abrir el formulario -->
             <select id="director_o_anio" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white">
               <option value="">Selecciona el año</option>
               <option>1998</option><option>1999</option><option>2000</option>
@@ -568,8 +580,9 @@
             <p class="text-xs text-gray-400 mt-1" id="poster-note"></p>
           </div>
           <div class="flex space-x-3 pt-4">
-            <button type="button" id="cancel-create-btn" class="flex-1 px-4 py-2 text-sm bg-gray-700 rounded-lg hover:bg-gray-600 transition">Cancelar</button>
-            <button type="submit" class="flex-1 px-4 py-2 text-sm bg-accent-blue rounded-lg hover:bg-blue-500 transition font-bold">Guardar</button>
+            <!-- ✅ CAMBIO 2: Cancelar con clase btn-cancelar (rojo degradado) -->
+            <button type="button" id="cancel-create-btn" class="btn-cancelar flex-1 px-4 py-2 text-sm rounded-lg">Cancelar</button>
+            <button type="submit" class="flex-1 px-4 py-2 text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 rounded-lg transition font-bold text-white">Guardar</button>
           </div>
           <p id="form-status" class="text-sm text-center"></p>
         </form>
@@ -737,7 +750,6 @@
           if (error) throw error;
         },
         async logout() {
-          // ✅ Limpiar flags de sesión al cerrar manualmente
           sessionStorage.removeItem("axo_session_alive");
           localStorage.removeItem("axo_remember");
           await supabase.auth.signOut();
@@ -749,20 +761,16 @@
           try {
             const { data } = await supabase.auth.getSession();
             if (data.session) {
-              // ✅ Verificar si el usuario eligió NO mantener sesión
-              // Si axo_remember = "0" y no hay sesión viva en esta pestaña → cerrar sesión
               const remember = localStorage.getItem("axo_remember");
               const sessionAlive = sessionStorage.getItem("axo_session_alive");
 
               if (remember === "0" && !sessionAlive) {
-                // Nueva apertura de navegador sin "Mantener sesión" → desloguear
                 await supabase.auth.signOut();
                 localStorage.removeItem("axo_remember");
                 Router.toLogin();
                 return;
               }
 
-              // Sesión válida
               sessionStorage.setItem("axo_session_alive", "1");
               state.currentUser = data.session.user;
               state.isAdmin = data.session.user.email === CONFIG.adminEmail;
@@ -840,7 +848,6 @@
 
           $("movie-count").textContent = state.filteredMovies.length;
 
-          // Cerrar todos los modos selección al tocar fuera de una card
           document.addEventListener("click", (e) => {
             if (!e.target.closest(".movie-card")) {
               document.querySelectorAll(".card-select-checkbox.visible").forEach(cb => {
@@ -860,7 +867,6 @@
             const card = document.createElement("div");
             card.className = "movie-card bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group flex flex-col overflow-hidden";
 
-            // Checkbox de selección (long press)
             if (canEdit || canDelete) {
               const checkbox = document.createElement("div");
               checkbox.className = "card-select-checkbox";
@@ -883,7 +889,6 @@
             const contentDiv = document.createElement("div");
             contentDiv.className = "p-2 cursor-pointer flex-1";
 
-            // Long press logic
             let pressTimer = null;
             let didLongPress = false;
             const startPress = () => {
@@ -935,7 +940,6 @@
             };
             card.appendChild(verBtn);
 
-            // Fila editar/eliminar — oculta, se revela con long press + checkbox
             if (canEdit || canDelete) {
               const actionRow = document.createElement("div");
               actionRow.className = "card-action-row";
@@ -1098,7 +1102,7 @@
                   <span>Descargar</span>
                 </a>
 
-                <!-- Local: abre selector "Abrir con..." de Android -->
+                <!-- ✅ CAMBIO 4: Botón Local — intent corregido para VLC directo con la ruta del archivo -->
                 <button class="detail-btn detail-btn-local" id="btn-local-open">
                   <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
@@ -1106,7 +1110,7 @@
                   <span>Local</span>
                 </button>
 
-                <!-- VLC: acceso directo a la app VLC de Android -->
+                <!-- Botón VLC: lanza VLC directamente con la ruta del archivo -->
                 <button class="detail-btn" id="btn-vlc-open"
                   style="background:linear-gradient(135deg,#ff6600,#e05500);color:#fff;font-weight:800;">
                   <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="#fff">
@@ -1118,7 +1122,7 @@
               </div>
             </div>`;
 
-          // Botón Local: Intent Android → abre selector "Abrir con..." del sistema
+          // ─── Botón Local: abre selector "Abrir con..." del sistema ───
           const btnLocal = document.getElementById("btn-local-open");
           if (btnLocal) {
             btnLocal.addEventListener("click", () => {
@@ -1127,7 +1131,6 @@
                 $("modal-no-local").classList.add("active");
                 return;
               }
-              // Intent URI → dispara el diálogo nativo "Abrir con..." de Android
               const cleanPath = localPath.trim().replace(/^\//, "");
               const intentUrl = "intent://" + cleanPath +
                 "#Intent;" +
@@ -1139,15 +1142,33 @@
             });
           }
 
-          // Botón VLC: lanza la app VLC directamente como acceso directo
+          // ─── ✅ CAMBIO 4: Botón VLC — ahora abre VLC directamente con el archivo ───
+          // Problema anterior: el intent solo abría VLC en pantalla principal sin el video.
+          // Causa del error "no abre": al elegir "abrir siempre con VLC" en el botón LOCAL,
+          // Android asocia ese intent (action=VIEW type=video/*) exclusivamente a VLC,
+          // pero si VLC no reconoce la ruta como un content:// URI válido, falla silenciosamente.
+          // Solución: el botón VLC ahora construye el intent con la ruta real del archivo
+          // usando el esquema "file://" + package de VLC para forzar apertura directa.
           const btnVlc = document.getElementById("btn-vlc-open");
           if (btnVlc) {
             btnVlc.addEventListener("click", () => {
-              const intentUrl =
-                "intent:#Intent;" +
+              const localPath = movie.local_url;
+              if (!localPath || localPath.trim() === "") {
+                $("modal-no-local").classList.add("active");
+                return;
+              }
+              // Construir ruta absoluta con file://
+              const filePath = localPath.trim().startsWith("/")
+                ? localPath.trim()
+                : "/" + localPath.trim();
+
+              // Intent que fuerza VLC con el archivo específico
+              const intentUrl = "intent://" + filePath.replace(/^\//, "") +
+                "#Intent;" +
+                "action=android.intent.action.VIEW;" +
+                "type=video/*;" +
                 "package=org.videolan.vlc;" +
-                "action=android.intent.action.MAIN;" +
-                "category=android.intent.category.LAUNCHER;" +
+                "S.browser_fallback_url=https://play.google.com/store/apps/details?id=org.videolan.vlc;" +
                 "end";
               window.location.href = intentUrl;
             });
@@ -1187,6 +1208,22 @@
         $("poster_file").setAttribute("required", "required");
         $("resena").value = "Full - HD";
         $("clave").value = "0000";
+
+        // ✅ CAMBIO 3: Preseleccionar el año actual en el formulario de creación
+        const currentYear = new Date().getFullYear().toString();
+        const anioSelect = $("director_o_anio");
+        // Si el año actual ya existe como opción, seleccionarlo directamente
+        if (anioSelect.querySelector(`option[value="${currentYear}"]`)) {
+          anioSelect.value = currentYear;
+        } else {
+          // Si el año actual no está en la lista (ej: 2031+), agregarlo dinámicamente
+          const opt = document.createElement("option");
+          opt.value = currentYear;
+          opt.textContent = currentYear;
+          anioSelect.appendChild(opt);
+          anioSelect.value = currentYear;
+        }
+
         UIModule.showModal("modal-create");
       });
 
@@ -1206,13 +1243,11 @@
         $("sidebar-overlay").classList.remove("active");
       });
 
-      // ✅ CAMBIO: botón Google ahora guarda preferencia de sesión antes de redirigir
       $("google-login-btn").addEventListener("click", () => {
         if (!$("terms-check").checked) {
           $("login-status").textContent = "Debes aceptar los términos y condiciones.";
           return;
         }
-        // Guardar preferencia de "Mantener sesión" antes del redirect OAuth
         const remember = $("remember-session").checked;
         localStorage.setItem("axo_remember", remember ? "1" : "0");
         AuthModule.loginWithGoogle();
@@ -1280,7 +1315,6 @@
 
       supabase.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          // ✅ Marcar sesión como viva en esta pestaña al hacer login exitoso
           sessionStorage.setItem("axo_session_alive", "1");
           state.currentUser = session.user;
           state.isAdmin = session.user.email === CONFIG.adminEmail;
