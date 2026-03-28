@@ -957,16 +957,24 @@
               </div>
             </div>`;
 
-          // ✅ Lógica botón Local
+          // ✅ Botón Local — abre con VLC usando esquema vlc://
           const btnLocal = document.getElementById("btn-local-play");
           if (btnLocal) {
             btnLocal.addEventListener("click", () => {
-              const localUrl = btnLocal.dataset.localUrl;
-              if (localUrl && localUrl.trim() !== "") {
-                // Intenta abrir el archivo local
-                window.location.href = localUrl.trim();
+              const localUrl = (btnLocal.dataset.localUrl || "").trim();
+              if (localUrl !== "") {
+                // Normaliza la ruta: asegura que empiece con /
+                const ruta = localUrl.startsWith("/") ? localUrl : "/" + localUrl;
+                // vlc:// le dice a Android que abra VLC con ese archivo
+                const vlcLink = "vlc://" + ruta;
+                const a = document.createElement("a");
+                a.href = vlcLink;
+                a.style.display = "none";
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => document.body.removeChild(a), 500);
               } else {
-                // Muestra popup "No existe archivo local"
+                // Sin ruta local guardada → popup de aviso
                 $("modal-no-local").classList.add("active");
               }
             });
