@@ -966,7 +966,7 @@
                 // Normaliza la ruta: asegura que empiece con /
                 const ruta = localUrl.startsWith("/") ? localUrl : "/" + localUrl;
                 // vlc:// le dice a Android que abra VLC con ese archivo
-                const vlcLink = "vlc://" + ruta;
+                const vlcLink = "vlc:" + ruta;
                 const a = document.createElement("a");
                 a.href = vlcLink;
                 a.style.display = "none";
