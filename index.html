@@ -981,48 +981,29 @@
                   <span>Descargar</span>
                 </a>
 
-                <!-- Local -->
-                <button class="detail-btn detail-btn-local" id="btn-local-play"
-                  data-local-url="${movie.local_url || ''}">
-                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
+                <!-- VLC: acceso directo a la app VLC de Android -->
+                <button class="detail-btn" id="btn-vlc-open"
+                  style="background:#ffffff;color:#ff6600;border:2px solid #ff6600;font-weight:800;">
+                  <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="#ff6600">
+                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z"/>
                   </svg>
-                  <span>Local</span>
-                </button>
-
-                <!-- Cerrar -->
-                <button class="detail-btn detail-btn-close" onclick="window.UIModule.hideModal('modal-details')">
-                  <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                  <span>Cerrar</span>
+                  <span>VLC</span>
                 </button>
 
               </div>
             </div>`;
 
-          // ✅ CORRECCIÓN VLC: usa encodeURI completo (no por segmento) y sin type=video/*
-          // El error "No se pueden ver múltiples medios" era causado por:
-          //   1. encodeURIComponent por segmento sobrecodificaba la ruta
-          //   2. type=video/* → el asterisco se interpreta mal en el intent URL
-          const btnLocal = document.getElementById("btn-local-play");
-          if (btnLocal) {
-            btnLocal.addEventListener("click", () => {
-              const localUrl = (btnLocal.dataset.localUrl || "").trim();
-              if (localUrl !== "") {
-                // Asegurar que comience con /
-                const ruta = localUrl.startsWith("/") ? localUrl : "/" + localUrl;
-                // encodeURI preserva los / separadores y codifica espacios/caracteres especiales
-                const rutaEncoded = encodeURI(ruta);
-                // Intent URL correcto para VLC en Android desde navegador
-                // Se omite type=video/* porque el * causa error de parsing en VLC
-                const intentUrl =
-                  "intent:" + rutaEncoded +
-                  "#Intent;scheme=file;package=org.videolan.vlc;action=android.intent.action.VIEW;end";
-                window.location.href = intentUrl;
-              } else {
-                $("modal-no-local").classList.add("active");
-              }
+          // Botón VLC: lanza la app VLC directamente como acceso directo
+          const btnVlc = document.getElementById("btn-vlc-open");
+          if (btnVlc) {
+            btnVlc.addEventListener("click", () => {
+              const intentUrl =
+                "intent:#Intent;" +
+                "package=org.videolan.vlc;" +
+                "action=android.intent.action.MAIN;" +
+                "category=android.intent.category.LAUNCHER;" +
+                "end";
+              window.location.href = intentUrl;
             });
           }
 
