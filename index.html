@@ -957,7 +957,7 @@
               </div>
             </div>`;
 
-          // ✅ Botón Local — abre con VLC usando esquema vlc://
+          // ✅ Botón Local — abre con VLC usando intent de Android
           const btnLocal = document.getElementById("btn-local-play");
           if (btnLocal) {
             btnLocal.addEventListener("click", () => {
@@ -965,14 +965,12 @@
               if (localUrl !== "") {
                 // Normaliza la ruta: asegura que empiece con /
                 const ruta = localUrl.startsWith("/") ? localUrl : "/" + localUrl;
-                // vlc:// le dice a Android que abra VLC con ese archivo
-                const vlcLink = "vlc://" + ruta;
-                const a = document.createElement("a");
-                a.href = vlcLink;
-                a.style.display = "none";
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => document.body.removeChild(a), 500);
+                // Encodea correctamente los espacios y caracteres especiales
+                const rutaEncoded = ruta.split("/").map(seg => encodeURIComponent(seg)).join("/");
+                // intent:// es la forma correcta de lanzar apps Android desde el navegador
+                const intentUrl = "intent://" + rutaEncoded +
+                  "#Intent;scheme=file;package=org.videolan.vlc;action=android.intent.action.VIEW;type=video/*;end";
+                window.location.href = intentUrl;
               } else {
                 // Sin ruta local guardada → popup de aviso
                 $("modal-no-local").classList.add("active");
