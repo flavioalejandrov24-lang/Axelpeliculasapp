@@ -89,10 +89,10 @@
         border-color: #16a34a88;
       }
 
-      /* Botón Ver detalles */
+      /* Botón Ver detalles — naranja */
       .btn-ver-detalles {
-        background: #1e293b;
-        color: #ffffff;
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: #fff;
         font-weight: 700;
         font-size: 0.72rem;
         border-radius: 0 0 12px 12px;
@@ -105,8 +105,59 @@
         cursor: pointer;
       }
       .btn-ver-detalles:hover {
-        background: #334155;
+        background: linear-gradient(135deg, #fb923c, #f97316);
         transform: scale(1.02);
+      }
+
+      /* Modo selección — long press */
+      .card-action-row {
+        display: none;
+        gap: 0;
+        border-top: 1px solid rgba(55,65,81,0.6);
+        animation: slideDown 0.2s ease;
+      }
+      .card-action-row.visible { display: flex; }
+
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-4px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Checkbox de selección en card */
+      .card-select-checkbox {
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 2px solid #f97316;
+        background: rgba(15,23,42,0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: background 0.15s, border-color 0.15s;
+        backdrop-filter: blur(2px);
+      }
+      .card-select-checkbox.visible { display: flex; }
+      .card-select-checkbox.checked {
+        background: #f97316;
+        border-color: #f97316;
+      }
+      .card-select-checkbox svg { display: none; }
+      .card-select-checkbox.checked svg { display: block; }
+
+      /* Vibración visual al activar long press */
+      @keyframes longpress-pulse {
+        0%   { box-shadow: 0 0 0 0 rgba(249,115,22,0.5); }
+        70%  { box-shadow: 0 0 0 10px rgba(249,115,22,0); }
+        100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+      }
+      .card-longpress-active {
+        animation: longpress-pulse 0.5s ease;
+        border: 1px solid rgba(249,115,22,0.6) !important;
       }
 
       /* Regla animada en modal */
@@ -789,15 +840,78 @@
 
           $("movie-count").textContent = state.filteredMovies.length;
 
+          // Cerrar todos los modos selección al tocar fuera de una card
+          document.addEventListener("click", (e) => {
+            if (!e.target.closest(".movie-card")) {
+              document.querySelectorAll(".card-select-checkbox.visible").forEach(cb => {
+                cb.classList.remove("visible","checked");
+                cb.closest(".movie-card").querySelector(".card-action-row")?.classList.remove("visible");
+                cb.closest(".movie-card").classList.remove("card-longpress-active");
+              });
+            }
+          }, { capture: false });
+
           state.filteredMovies.forEach(movie => {
             const username = movie.subido_por ? emailToUsername(movie.subido_por) : null;
+            const isOwner = state.currentUser && movie.subido_por === state.currentUser.email;
+            const canEdit = isOwner;
+            const canDelete = isOwner || state.isAdmin;
 
             const card = document.createElement("div");
-            card.className = "bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group flex flex-col overflow-hidden";
+            card.className = "movie-card bg-primary-dark rounded-xl shadow-lg hover:shadow-accent-blue/50 transition transform hover:scale-105 relative group flex flex-col overflow-hidden";
+
+            // Checkbox de selección (long press)
+            if (canEdit || canDelete) {
+              const checkbox = document.createElement("div");
+              checkbox.className = "card-select-checkbox";
+              checkbox.innerHTML = `<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`;
+              checkbox.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isChecked = checkbox.classList.toggle("checked");
+                const actionRow = card.querySelector(".card-action-row");
+                if (actionRow) {
+                  isChecked ? actionRow.classList.add("visible") : actionRow.classList.remove("visible");
+                }
+                if (!isChecked) {
+                  checkbox.classList.remove("visible");
+                  card.classList.remove("card-longpress-active");
+                }
+              });
+              card.appendChild(checkbox);
+            }
 
             const contentDiv = document.createElement("div");
             contentDiv.className = "p-2 cursor-pointer flex-1";
+
+            // Long press logic
+            let pressTimer = null;
+            let didLongPress = false;
+            const startPress = () => {
+              didLongPress = false;
+              pressTimer = setTimeout(() => {
+                if (canEdit || canDelete) {
+                  didLongPress = true;
+                  const cb = card.querySelector(".card-select-checkbox");
+                  if (cb) {
+                    cb.classList.add("visible","checked");
+                    card.classList.add("card-longpress-active");
+                    card.querySelector(".card-action-row")?.classList.add("visible");
+                    if (navigator.vibrate) navigator.vibrate(40);
+                  }
+                }
+              }, 600);
+            };
+            const cancelPress = () => clearTimeout(pressTimer);
+
+            contentDiv.addEventListener("touchstart", startPress, { passive: true });
+            contentDiv.addEventListener("touchend", cancelPress);
+            contentDiv.addEventListener("touchmove", cancelPress, { passive: true });
+            contentDiv.addEventListener("mousedown", startPress);
+            contentDiv.addEventListener("mouseup", cancelPress);
+            contentDiv.addEventListener("mouseleave", cancelPress);
+
             contentDiv.onclick = () => {
+              if (didLongPress) { didLongPress = false; return; }
               $("sidebar").classList.remove("active");
               $("sidebar-overlay").classList.remove("active");
               UIModule.showDetails(movie);
@@ -821,13 +935,10 @@
             };
             card.appendChild(verBtn);
 
-            const isOwner = state.currentUser && movie.subido_por === state.currentUser.email;
-            const canEdit = isOwner;
-            const canDelete = isOwner || state.isAdmin;
-
+            // Fila editar/eliminar — oculta, se revela con long press + checkbox
             if (canEdit || canDelete) {
               const actionRow = document.createElement("div");
-              actionRow.className = "flex gap-0 border-t border-gray-700/60";
+              actionRow.className = "card-action-row";
 
               if (canEdit) {
                 const editBtn = document.createElement("button");
@@ -843,7 +954,13 @@
                 deleteBtn.className = "flex-1 flex items-center justify-center gap-1 py-2 text-xs font-semibold text-red-400 hover:bg-red-900/30 transition";
                 deleteBtn.title = "Eliminar";
                 deleteBtn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Eliminar`;
-                deleteBtn.onclick = e => { e.stopPropagation(); CatalogModule.deleteMovie(movie.id); };
+                deleteBtn.onclick = e => {
+                  e.stopPropagation();
+                  card.querySelector(".card-select-checkbox")?.classList.remove("visible","checked");
+                  card.querySelector(".card-action-row")?.classList.remove("visible");
+                  card.classList.remove("card-longpress-active");
+                  CatalogModule.deleteMovie(movie.id);
+                };
                 actionRow.appendChild(deleteBtn);
               }
 
