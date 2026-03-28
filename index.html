@@ -452,8 +452,11 @@
             <textarea id="resena" rows="3" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white">Full - HD</textarea>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1">Link URL</label>
-            <input type="url" id="link_url" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white" placeholder="https://..."/>
+            <label class="block text-sm font-medium text-gray-300 mb-1">
+              🔗 Link URL
+              <span class="text-xs text-gray-500 ml-1">(opcional — nube: MEGA, Drive, etc.)</span>
+            </label>
+            <input type="text" id="link_url" class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white" placeholder="https://mega.nz/..."/>
           </div>
           <!-- ✅ NUEVO CAMPO: Local URL -->
           <div>
@@ -1035,6 +1038,16 @@
       $("movie-form").addEventListener("submit", async e => {
         e.preventDefault();
         const status = $("form-status");
+
+        // Validar que al menos uno de los dos links tenga valor
+        const linkVal = $("link_url").value.trim();
+        const localVal = $("local_url").value.trim();
+        if (!linkVal && !localVal) {
+          status.textContent = "⚠️ Ingresa al menos un Link URL o Local URL";
+          status.className = "text-sm text-center text-yellow-400";
+          return;
+        }
+
         status.textContent = "Guardando...";
         status.className = "text-sm text-center text-gray-400";
         try {
