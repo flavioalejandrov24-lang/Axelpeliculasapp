@@ -168,6 +168,31 @@
         padding: 16px;
       }
       #modal-no-local.active { display: flex; }
+
+      /* ✅ NUEVO: checkboxes login en fila */
+      .login-checks-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .login-check-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        color: #d1d5db;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .login-check-label input[type="checkbox"] {
+        accent-color: #38bdf8;
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+      }
     </style>
   </head>
   <body class="bg-secondary-dark text-white font-sans min-h-screen">
@@ -187,10 +212,19 @@
           </svg>
           <span>Entrar con Google</span>
         </button>
-        <label class="flex items-center space-x-2 text-xs sm:text-sm text-gray-300 mb-6">
-          <input type="checkbox" id="terms-check" class="accent-accent-blue w-4 h-4" required/>
-          <span>Acepto términos y condiciones</span>
-        </label>
+
+        <!-- ✅ CAMBIO: dos checkboxes en la misma fila -->
+        <div class="login-checks-row">
+          <label class="login-check-label">
+            <input type="checkbox" id="terms-check" required/>
+            <span>Aceptar términos</span>
+          </label>
+          <label class="login-check-label">
+            <input type="checkbox" id="remember-session"/>
+            <span>Mantener sesión</span>
+          </label>
+        </div>
+
         <p class="text-xs text-gray-500 text-center">App creada por Axeltechnology</p>
         <p id="login-status" class="text-xs sm:text-sm text-center text-red-400 mt-3"></p>
       </div>
@@ -448,7 +482,6 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Reseña</label>
-            <!-- ✅ CAMBIO: valor por defecto "Full - HD" -->
             <textarea id="resena" rows="3" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white">Full - HD</textarea>
           </div>
           <div>
@@ -458,7 +491,6 @@
             </label>
             <input type="text" id="link_url" class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white" placeholder="https://mega.nz/..."/>
           </div>
-          <!-- ✅ NUEVO CAMPO: Local URL -->
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">
               📁 Local URL
@@ -469,7 +501,6 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Clave de Acceso</label>
-            <!-- ✅ CAMBIO: valor por defecto "0000" -->
             <input type="text" id="clave" required class="w-full p-2 bg-secondary-dark border border-gray-600 rounded-lg text-white" value="0000"/>
           </div>
           <div>
@@ -655,6 +686,9 @@
           if (error) throw error;
         },
         async logout() {
+          // ✅ Limpiar flags de sesión al cerrar manualmente
+          sessionStorage.removeItem("axo_session_alive");
+          localStorage.removeItem("axo_remember");
           await supabase.auth.signOut();
           state.currentUser = null;
           renderUserChip(null);
@@ -664,6 +698,21 @@
           try {
             const { data } = await supabase.auth.getSession();
             if (data.session) {
+              // ✅ Verificar si el usuario eligió NO mantener sesión
+              // Si axo_remember = "0" y no hay sesión viva en esta pestaña → cerrar sesión
+              const remember = localStorage.getItem("axo_remember");
+              const sessionAlive = sessionStorage.getItem("axo_session_alive");
+
+              if (remember === "0" && !sessionAlive) {
+                // Nueva apertura de navegador sin "Mantener sesión" → desloguear
+                await supabase.auth.signOut();
+                localStorage.removeItem("axo_remember");
+                Router.toLogin();
+                return;
+              }
+
+              // Sesión válida
+              sessionStorage.setItem("axo_session_alive", "1");
               state.currentUser = data.session.user;
               state.isAdmin = data.session.user.email === CONFIG.adminEmail;
               renderUserChip(data.session.user.email);
@@ -762,7 +811,6 @@
             `;
             card.appendChild(contentDiv);
 
-            // ── "Ver detalles" siempre visible ──
             const verBtn = document.createElement("button");
             verBtn.className = "btn-ver-detalles";
             verBtn.textContent = "▶ Ver detalles";
@@ -773,7 +821,6 @@
             };
             card.appendChild(verBtn);
 
-            // ── Botones Editar / Eliminar ──
             const isOwner = state.currentUser && movie.subido_por === state.currentUser.email;
             const canEdit = isOwner;
             const canDelete = isOwner || state.isAdmin;
@@ -807,7 +854,6 @@
           });
         },
 
-        // ✅ ACTUALIZADO: incluye local_url en el guardado
         async saveMovie(formData, isEdit = false) {
           const file = $("poster_file").files[0];
           let fotoUrl = formData.foto_url;
@@ -824,7 +870,7 @@
             director_o_anio: formData.director_o_anio,
             resena: formData.resena,
             link_url: formData.link_url || null,
-            local_url: formData.local_url || null,   // ✅ NUEVO CAMPO
+            local_url: formData.local_url || null,
             clave: formData.clave,
             foto_url: fotoUrl,
           };
@@ -895,7 +941,7 @@
           }
           $("resena").value = movie.resena;
           $("link_url").value = movie.link_url || "";
-          $("local_url").value = movie.local_url || "";   // ✅ NUEVO CAMPO
+          $("local_url").value = movie.local_url || "";
           $("clave").value = movie.clave;
           $("poster-preview").src = movie.foto_url;
           $("poster-note").textContent = "Deja vacío para mantener el póster actual";
@@ -903,7 +949,6 @@
           this.showModal("modal-create");
         },
 
-        // ✅ ACTUALIZADO: 3 botones en modal de detalles + lógica Local
         showDetails(movie) {
           const content = $("details-content");
           if (!content) return;
@@ -924,7 +969,6 @@
                   </div>
                 </div>` : ""}
 
-              <!-- ✅ NUEVO: 3 botones en una fila -->
               <div class="flex gap-2 w-full max-w-sm pt-2">
 
                 <!-- Descargar -->
@@ -957,22 +1001,26 @@
               </div>
             </div>`;
 
-          // ✅ Botón Local — abre con VLC usando intent de Android
+          // ✅ CORRECCIÓN VLC: usa encodeURI completo (no por segmento) y sin type=video/*
+          // El error "No se pueden ver múltiples medios" era causado por:
+          //   1. encodeURIComponent por segmento sobrecodificaba la ruta
+          //   2. type=video/* → el asterisco se interpreta mal en el intent URL
           const btnLocal = document.getElementById("btn-local-play");
           if (btnLocal) {
             btnLocal.addEventListener("click", () => {
               const localUrl = (btnLocal.dataset.localUrl || "").trim();
               if (localUrl !== "") {
-                // Normaliza la ruta: asegura que empiece con /
+                // Asegurar que comience con /
                 const ruta = localUrl.startsWith("/") ? localUrl : "/" + localUrl;
-                // Encodea correctamente los espacios y caracteres especiales
-                const rutaEncoded = ruta.split("/").map(seg => encodeURIComponent(seg)).join("/");
-                // intent:// es la forma correcta de lanzar apps Android desde el navegador
-                const intentUrl = "intent://" + rutaEncoded +
-                  "#Intent;scheme=file;package=org.videolan.vlc;action=android.intent.action.VIEW;type=video/*;end";
+                // encodeURI preserva los / separadores y codifica espacios/caracteres especiales
+                const rutaEncoded = encodeURI(ruta);
+                // Intent URL correcto para VLC en Android desde navegador
+                // Se omite type=video/* porque el * causa error de parsing en VLC
+                const intentUrl =
+                  "intent:" + rutaEncoded +
+                  "#Intent;scheme=file;package=org.videolan.vlc;action=android.intent.action.VIEW;end";
                 window.location.href = intentUrl;
               } else {
-                // Sin ruta local guardada → popup de aviso
                 $("modal-no-local").classList.add("active");
               }
             });
@@ -1010,11 +1058,8 @@
         $("poster-preview").src = "https://placehold.co/80x112/334155/E2E8F0?text=+";
         $("poster-note").textContent = "";
         $("poster_file").setAttribute("required", "required");
-
-        // ✅ Restaurar valores por defecto después del reset
         $("resena").value = "Full - HD";
         $("clave").value = "0000";
-
         UIModule.showModal("modal-create");
       });
 
@@ -1033,10 +1078,19 @@
         $("sidebar").classList.remove("active");
         $("sidebar-overlay").classList.remove("active");
       });
+
+      // ✅ CAMBIO: botón Google ahora guarda preferencia de sesión antes de redirigir
       $("google-login-btn").addEventListener("click", () => {
-        if (!$("terms-check").checked) { $("login-status").textContent = "Debes aceptar los términos y condiciones."; return; }
+        if (!$("terms-check").checked) {
+          $("login-status").textContent = "Debes aceptar los términos y condiciones.";
+          return;
+        }
+        // Guardar preferencia de "Mantener sesión" antes del redirect OAuth
+        const remember = $("remember-session").checked;
+        localStorage.setItem("axo_remember", remember ? "1" : "0");
         AuthModule.loginWithGoogle();
       });
+
       $("logout-btn").addEventListener("click", () => AuthModule.logout());
       $("cancel-create-btn").addEventListener("click", () => UIModule.hideModal("modal-create"));
       $("close-details-btn").addEventListener("click", () => UIModule.hideModal("modal-details"));
@@ -1045,7 +1099,6 @@
         e.preventDefault();
         const status = $("form-status");
 
-        // Validar que al menos uno de los dos links tenga valor
         const linkVal = $("link_url").value.trim();
         const localVal = $("local_url").value.trim();
         if (!linkVal && !localVal) {
@@ -1065,7 +1118,7 @@
             director_o_anio: $("director_o_anio").value,
             resena: $("resena").value,
             link_url: $("link_url").value.trim() || null,
-            local_url: $("local_url").value || null,   // ✅ NUEVO CAMPO
+            local_url: $("local_url").value || null,
             clave: $("clave").value,
             foto_url: state.editingMovie ? state.editingMovie.foto_url : "",
           };
@@ -1100,6 +1153,8 @@
 
       supabase.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && session) {
+          // ✅ Marcar sesión como viva en esta pestaña al hacer login exitoso
+          sessionStorage.setItem("axo_session_alive", "1");
           state.currentUser = session.user;
           state.isAdmin = session.user.email === CONFIG.adminEmail;
           renderUserChip(session.user.email);
