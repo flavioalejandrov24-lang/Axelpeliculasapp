@@ -1215,6 +1215,40 @@
             });
           }
 
+          // ─── Helper: limpia y encodea la ruta para Android Intent URI ───
+          // CAUSA RAÍZ DEL FALLO: los paréntesis () en el nombre del archivo
+          // (ej: "Maquina de guerra (2026).mp4") rompen el parsing del Intent en Android
+          // cuando no hay una asociación previa guardada. Mike Nick funcionaba porque
+          // tenía "abrir siempre con VLC" ya memorizado, ignorando la URL mal formada.
+          // Tildes y ñ también pueden causar fallos silenciosos en rutas de archivo.
+          function buildSafePath(rawPath) {
+            if (!rawPath) return "";
+            return rawPath.trim()
+              .replace(/\\/g, "/")        // backslashes → forward slashes
+              .replace(/\/+/g, "/")       // slashes dobles → uno solo
+              .split("/")
+              .map((segment, idx, arr) => {
+                // Solo encodear el nombre del archivo (último segmento)
+                // Los directorios intermedios no se tocan para preservar la ruta
+                if (idx < arr.length - 1) return segment;
+                return segment
+                  .replace(/\(/g, "%28").replace(/\)/g, "%29")
+                  .replace(/&/g,  "%26").replace(/\+/g, "%2B")
+                  .replace(/=/g,  "%3D").replace(/\?/g, "%3F")
+                  .replace(/#/g,  "%23").replace(/'/g,  "%27")
+                  .replace(/,/g,  "%2C").replace(/ /g,  "%20")
+                  .replace(/á/g, "%C3%A1").replace(/Á/g, "%C3%81")
+                  .replace(/é/g, "%C3%A9").replace(/É/g, "%C3%89")
+                  .replace(/í/g, "%C3%AD").replace(/Í/g, "%C3%8D")
+                  .replace(/ó/g, "%C3%B3").replace(/Ó/g, "%C3%93")
+                  .replace(/ú/g, "%C3%BA").replace(/Ú/g, "%C3%9A")
+                  .replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C")
+                  .replace(/ñ/g, "%C3%B1").replace(/Ñ/g, "%C3%91");
+              })
+              .join("/")
+              .replace(/^\//, ""); // quitar slash inicial para el intent://
+          }
+
           // ─── Botón Local: muestra diagnóstico → abre selector "Abrir con..." del sistema ───
           const btnLocal = document.getElementById("btn-local-open");
           if (btnLocal) {
@@ -1224,19 +1258,13 @@
                 $("modal-no-local").classList.add("active");
                 return;
               }
-              // Limpiar slashes dobles y espacios, asegurar ruta absoluta
-              const cleanPath = rawStored.trim()
-                .replace(/\\/g, "/")          // backslashes → forward slashes
-                .replace(/\/+/g, "/")         // múltiples slashes → uno solo
-                .replace(/^\//, "");          // quitar slash inicial para el intent://
-
-              const intentUrl = "intent://" + cleanPath +
+              const safePath = buildSafePath(rawStored);
+              const intentUrl = "intent://" + safePath +
                 "#Intent;" +
                 "action=android.intent.action.VIEW;" +
                 "type=video/*;" +
                 "S.browser_fallback_url=https://play.google.com/store/apps/details?id=org.videolan.vlc;" +
                 "end";
-
               launchWithDiagnostic(rawStored, intentUrl, () => {
                 window.location.href = intentUrl;
               });
@@ -1252,20 +1280,14 @@
                 $("modal-no-local").classList.add("active");
                 return;
               }
-              // Misma limpieza de ruta
-              const cleanPath = rawStored.trim()
-                .replace(/\\/g, "/")
-                .replace(/\/+/g, "/")
-                .replace(/^\//, "");
-
-              const intentUrl = "intent://" + cleanPath +
+              const safePath = buildSafePath(rawStored);
+              const intentUrl = "intent://" + safePath +
                 "#Intent;" +
                 "action=android.intent.action.VIEW;" +
                 "type=video/*;" +
                 "package=org.videolan.vlc;" +
                 "S.browser_fallback_url=https://play.google.com/store/apps/details?id=org.videolan.vlc;" +
                 "end";
-
               launchWithDiagnostic(rawStored, intentUrl, () => {
                 window.location.href = intentUrl;
               });
@@ -1354,6 +1376,26 @@
       $("logout-btn").addEventListener("click", () => AuthModule.logout());
       $("cancel-create-btn").addEventListener("click", () => UIModule.hideModal("modal-create"));
       $("close-details-btn").addEventListener("click", () => UIModule.hideModal("modal-details"));
+
+      // ─── Advertencia en tiempo real en el campo local_url ───
+      // Detecta caracteres problematicos para Android Intent y avisa al usuario
+      const localUrlInput = $("local_url");
+      const localUrlWarn = document.createElement("p");
+      localUrlWarn.id = "local-url-warn";
+      localUrlWarn.style.cssText = "font-size:0.68rem;margin-top:4px;display:none;color:#fbbf24;";
+      localUrlInput.parentNode.appendChild(localUrlWarn);
+      localUrlInput.addEventListener("input", () => {
+        const val = localUrlInput.value;
+        const bad = [];
+        if (/[()]/.test(val)) bad.push("parentesis ()");
+        if (/[áéíóúÁÉÍÓÚüÜñÑ]/.test(val)) bad.push("tildes / n~");
+        if (/[\&+=#?',]/.test(val)) bad.push("caracteres especiales");
+        if (/\s/.test(val.split("/").pop())) bad.push("espacios en nombre de archivo");
+        if (bad.length > 0) {
+          localUrlWarn.textContent = "\u26A0\uFE0F La app los encodea auto, pero si falla renombra el archivo sin: " + bad.join(", ");
+          localUrlWarn.style.display = "block";
+        } else { localUrlWarn.style.display = "none"; }
+      });
 
       $("movie-form").addEventListener("submit", async e => {
         e.preventDefault();
